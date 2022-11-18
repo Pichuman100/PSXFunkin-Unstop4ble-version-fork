@@ -188,6 +188,8 @@ typedef struct
 
 	//Stage settings
 	int pal_i, wide_i;
+	int pause_state;
+	fixed_t pause_scroll;
 	struct
 	{
 		boolean ghost, downscroll, middlescroll, expsync, practice, debug, palmode, widescreen, sfxmiss, songtimer, botplay, flash;
@@ -241,7 +243,7 @@ typedef struct
 	Character *player;
 	Character *player2;
 	Character *opponent;
-    Character *opponent2;
+	Character *opponent2;
 	Character *gf;
 	
 	Section *cur_section; //Current section

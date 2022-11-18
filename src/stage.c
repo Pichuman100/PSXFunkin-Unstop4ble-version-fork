@@ -282,18 +282,21 @@ static u8 Stage_HitNote(PlayerState *this, u8 type, fixed_t offset)
 	return hit_type;
 }
 
-static void Stage_MissNote(PlayerState *this)
+static void Stage_MissNote(PlayerState *this, u8 type)
 {
 	this->max_accuracy += 1;
 	this->refresh_accuracy = true;
 	this->miss += 1;
 	this->refresh_miss = true;
+    
+    if (this->character->spec & CHAR_SPEC_MISSANIM)
+		this->character->set_anim(this->character, note_anims[type & 0x3][2]);
+	else
+		this->character->set_anim(this->character, note_anims[type & 0x3][0]);
 
 	if (this->combo)
 	{
 		//Kill combo
-		if (stage.gf != NULL && this->combo > 5)
-			stage.gf->set_anim(stage.gf, CharAnim_DownAlt); //Cry if we lost a large combo
 		this->combo = 0;
 		
 		//Create combo object telling of our lost combo
@@ -373,7 +376,7 @@ static void Stage_NoteCheck(PlayerState *this, u8 type)
 
 		else
 			this->character->set_anim(this->character, note_anims[type & 0x3][0]);
-		Stage_MissNote(this);
+		Stage_MissNote(this, note->type);
 		
 		this->health -= 400;
 		this->score -= 1;
@@ -409,7 +412,7 @@ static void Stage_SustainCheck(PlayerState *this, u8 type)
 
 static void CheckNewScore()
 {
-	if (stage.mode == StageMode_Normal && !stage.prefs.botplay && timer.timermin == 0 && timer.timer <= 5)
+	if (stage.mode == StageMode_Normal && !stage.prefs.botplay && !stage.prefs.practice && timer.timermin == 0 && timer.timer <= 5)
 	{
 		if (stage.player_state[0].score >= stage.prefs.savescore[stage.stage_id][stage.stage_diff])
 			stage.prefs.savescore[stage.stage_id][stage.stage_diff] = stage.player_state[0].score;			
@@ -919,7 +922,7 @@ static void Stage_DrawNotes(void)
 				{
 					//Missed note
 					Stage_CutVocal();
-					Stage_MissNote(this);
+					Stage_MissNote(this, note->type);
 					this->health -= 475;
 					
 				}
@@ -1638,30 +1641,24 @@ static boolean Stage_NextLoad(void)
 	}
 }
 
+static int deadtimer;
+static boolean inctimer;
+
 void Stage_Tick(void)
 {
 	SeamLoad:;
 	
 	//Tick transition
 	//Return to menu when start is pressed
-	if (pad_state.press & PAD_START && stage.state == StageState_Play)
-	{
-		stage.paused = !stage.paused;
-	
-		if (stage.paused)
-		{
-			Audio_PauseXA();
-			PausedState();
-		}
-		else
-		{
-			Audio_ResumeXA();
-		}
-	}
+
 	if (pad_state.press & (PAD_START | PAD_CROSS) && stage.state != StageState_Play)
 	{
-		stage.trans = StageTrans_Reload;
-		Trans_Start();
+		if (deadtimer == 0)
+		{
+			inctimer = true;
+			Audio_StopXA();
+			Audio_PlaySound(Sounds[1], 0x3fff);
+		}
 	}
 	else if (pad_state.press & PAD_CIRCLE && stage.state != StageState_Play)
 	{
@@ -1669,9 +1666,19 @@ void Stage_Tick(void)
 		Trans_Start();
 	}
 
+    if (inctimer)
+		deadtimer ++;
+
+	if (deadtimer == 200 && stage.state != StageState_Play)
+	{
+		stage.trans = StageTrans_Reload;
+		Trans_Start();
+	}
+
 	if (Trans_Tick())
 	{
-		switch (stage.trans)
+		stage.paused = false;
+        switch (stage.trans)
 		{
 			case StageTrans_Menu:
 				CheckNewScore();
@@ -1896,6 +1903,7 @@ void Stage_Tick(void)
 						Trans_Start();
 					}
 				}	
+                
 				RecalcScroll:;
 				//Update song scroll and step
 				if (next_scroll > stage.note_scroll)
@@ -1928,6 +1936,30 @@ void Stage_Tick(void)
 						next_scroll = ((fixed_t)stage.step_base << FIXED_SHIFT) + FIXED_MUL(stage.song_time - stage.time_base, stage.step_crochet);
 						goto RecalcScroll;
 					}
+				}
+			}
+            
+            if (stage.song_step >= 0)
+			{
+				if (stage.paused == false && pad_state.press & PAD_START)
+				{
+					stage.pause_scroll = -1;
+					Audio_PauseXA();
+					stage.paused = true;
+					pad_state.press = 0;
+				}
+			}
+
+			if (stage.paused)
+			{
+				switch (stage.pause_state)
+				{
+					case 0:
+						PausedState();
+						break;
+                    case 1:
+							OptionsState(&note_x);
+							break;
 				}
 			}
 
@@ -2115,17 +2147,17 @@ void Stage_Tick(void)
 					Stage_DrawHealth(stage.player_state[0].health, stage.player_state[0].character->health_i,    1);
 					Stage_DrawHealth(stage.player_state[0].health, stage.player_state[1].character->health_i, -1);
 					
-                                        //Draw health bar
-                                        if (stage.mode == StageMode_Swap)
-                                        {
+                    //Draw health bar
+                    if (stage.mode == StageMode_Swap)
+                    {
 					    Stage_DrawHealthBar(255 - (255 * stage.player_state[0].health / 20000), stage.player->health_bar);
 					    Stage_DrawHealthBar(255, stage.opponent->health_bar);
-                                        }
-                                        else
-                                        {
+                    }
+                    else
+                    {
 					    Stage_DrawHealthBar(255 - (255 * stage.player_state[0].health / 20000), stage.opponent->health_bar);
 					    Stage_DrawHealthBar(255, stage.player->health_bar);
-                                        }
+                    }
 				}
 			
 				//Tick note splashes
