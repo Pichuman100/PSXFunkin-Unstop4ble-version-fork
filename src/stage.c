@@ -674,6 +674,40 @@ void Stage_BlendTex(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_
 	Gfx_BlendTex(tex, src, &sdst, mode);
 }
 
+void Stage_BlendTexV2(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, u8 mode, u8 opacity)
+{
+	fixed_t xz = dst->x;
+	fixed_t yz = dst->y;
+	fixed_t wz = dst->w;
+	fixed_t hz = dst->h;
+
+	//Don't draw if HUD and is disabled
+	if (tex == &stage.tex_hud0 || tex == &stage.tex_hud1)
+	{
+		#ifdef STAGE_NOHUD
+			return;
+		#endif
+	}
+
+	fixed_t l = (screen.SCREEN_WIDTH2  << FIXED_SHIFT) + FIXED_MUL(xz, zoom);// + FIXED_DEC(1,2);
+	fixed_t t = (screen.SCREEN_HEIGHT2 << FIXED_SHIFT) + FIXED_MUL(yz, zoom);// + FIXED_DEC(1,2);
+	fixed_t r = l + FIXED_MUL(wz, zoom);
+	fixed_t b = t + FIXED_MUL(hz, zoom);
+
+	l >>= FIXED_SHIFT;
+	t >>= FIXED_SHIFT;
+	r >>= FIXED_SHIFT;
+	b >>= FIXED_SHIFT;
+
+	RECT sdst = {
+		l,
+		t,
+		r - l,
+		b - t,
+	};
+	Gfx_BlendTexV2(tex, src, &sdst, mode, opacity);
+}
+
 void Stage_DrawTexArb(Gfx_Tex *tex, const RECT *src, const POINT_FIXED *p0, const POINT_FIXED *p1, const POINT_FIXED *p2, const POINT_FIXED *p3, fixed_t zoom)
 {
 	//Don't draw if HUD and HUD is disabled
@@ -1306,7 +1340,10 @@ static void Stage_LoadSFX(void)
 		{
 			char text[0x80];
 			sprintf(text, "\\SOUNDS\\MISS%d.VAG;1", i + 1);
-		    Sounds[i + 4] = Audio_LoadSound(text);
+		  	IO_FindFile(&file, text);
+		    u32 *data = IO_ReadFile(&file);
+		    Sounds[i + 4] = Audio_LoadVAGData(data, file.size);
+		    Mem_Free(data);
 		}
     }
 }
