@@ -1411,6 +1411,8 @@ static void Stage_LoadState(void)
 		timer.secondtimer = 0;
 		timer.timer = Audio_GetLength(stage.stage_def->music_track) - 1;
 		timer.timermin = 0;
+		timer.timersec = 0;
+		stage.paused = false;
 		strcpy(stage.player_state[i].accuracy_text, "Accuracy: ?");
 		strcpy(stage.player_state[i].miss_text, "Misses: 0");
 		strcpy(stage.player_state[i].score_text, "Score: 0");
@@ -2219,13 +2221,8 @@ void Stage_Tick(void)
 				stage.back->draw_bg(stage.back);
 			
 			if (stage.song_step > 0)
-			{
 				stage.song_beat = stage.song_step / 4;
-				
-				StageTimer_Tick();
-			}
-			else
-				StageTimer_Calculate();
+			StageTimer_Tick();
 			
 			//Player 2 and Opponent 2 Switches
 			if (stage.stage_id == StageId_6_3)
