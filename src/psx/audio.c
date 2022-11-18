@@ -8,6 +8,7 @@
 
 #include "../io.h"
 #include "../main.h"
+#include "../stage.h"
 
 //XA state
 #define XA_STATE_INIT    (1 << 0)
