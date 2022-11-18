@@ -2,9 +2,8 @@ all: \
 	iso/menu/menu.arc \
 	iso/menu/loading.tim \
 	iso/icon16.tim \
-	iso/font/boldfont.tim \
+	iso/font/font.tim \
 	iso/font/arial.tim \
-	iso/font/cdr.tim \
 	iso/stage/hud0.tim \
 	iso/stage/hud1-1.tim \
 	iso/stage/hud1-2.tim \

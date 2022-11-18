@@ -1091,7 +1091,7 @@ void Menu_Tick(void)
 			if (menu.page_swap)
 				menu.scroll = COUNT_OF(menu_options) * FIXED_DEC(24 + screen.SCREEN_HEIGHT2,1);
 			
-			RECT save_src = {0, 121, 55, 7};
+			RECT save_src = {0, 120, 55, 7};
 			RECT save_dst = {screen.SCREEN_WIDTH / 2 + 30 - (121 / 2), screen.SCREEN_HEIGHT - 30, 53 * 2, 7 * 2};
 			Gfx_DrawTex(&menu.tex_story, &save_src, &save_dst);
 

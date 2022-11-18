@@ -189,7 +189,7 @@ void FontData_Load(FontData *this, Font font)
 	{
 		case Font_Bold:
 			//Load texture and set functions
-			Gfx_LoadTex(&this->tex, IO_Read("\\FONT\\BOLDFONT.TIM;1"), GFX_LOADTEX_FREE);
+			Gfx_LoadTex(&this->tex, IO_Read("\\FONT\\FONT.TIM;1"), GFX_LOADTEX_FREE);
 			this->get_width = Font_Bold_GetWidth;
 			this->draw_col = Font_Bold_DrawCol;
 			break;
@@ -201,7 +201,7 @@ void FontData_Load(FontData *this, Font font)
 			break;
 		case Font_CDR:
 			//Load texture and set functions
-			Gfx_LoadTex(&this->tex, IO_Read("\\FONT\\CDR.TIM;1"), GFX_LOADTEX_FREE);
+			Gfx_LoadTex(&this->tex, IO_Read("\\FONT\\FONT.TIM;1"), GFX_LOADTEX_FREE);
 			this->get_width = Font_CDR_GetWidth;
 			this->draw_col = Font_CDR_DrawCol;
 			break;
