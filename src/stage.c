@@ -376,7 +376,7 @@ static void Stage_NoteCheck(PlayerState *this, u8 type)
 
 		else
 			this->character->set_anim(this->character, note_anims[type & 0x3][0]);
-		Stage_MissNote(this, note->type);
+		Stage_MissNote(this, type);
 		
 		this->health -= 400;
 		this->score -= 1;
@@ -922,7 +922,7 @@ static void Stage_DrawNotes(void)
 				{
 					//Missed note
 					Stage_CutVocal();
-					Stage_MissNote(this, note->type);
+					Stage_MissNote(this, type);
 					this->health -= 475;
 					
 				}
@@ -1154,19 +1154,19 @@ static void Stage_CountDown(void)
 	RECT_FIXED go_dst = {FIXED_DEC(-23,1), FIXED_DEC(-18,1), FIXED_DEC(95 * 2,1), FIXED_DEC(48 * 2,1)};	
 
 	if (drawshit == 3 && stage.song_step >= -15 && stage.song_step <= -12)
-		Stage_DrawTex(&stage.tex_count, &ready_src, &ready_dst, stage.bump, -64);
+		Stage_DrawTex(&stage.tex_count, &ready_src, &ready_dst, stage.bump);
 	else if (drawshit == 3 && stage.song_step >= -12 && stage.song_step <= -11)
-		Stage_BlendTex(&stage.tex_count, &ready_src, &ready_dst, stage.bump, -64, 1);
+		Stage_BlendTex(&stage.tex_count, &ready_src, &ready_dst, stage.bump,1);
 
 	if (drawshit == 2 && stage.song_step >= -10 && stage.song_step <= -7)
-		Stage_DrawTex(&stage.tex_count, &set_src, &set_dst, stage.bump, -64);
+		Stage_DrawTex(&stage.tex_count, &set_src, &set_dst, stage.bump);
 	else if (drawshit == 2 && stage.song_step >= -7 && stage.song_step <= -6)
-		Stage_BlendTex(&stage.tex_count, &set_src, &set_dst, stage.bump, -64, 1);
+		Stage_BlendTex(&stage.tex_count, &set_src, &set_dst, stage.bump,1);
 
 	if (drawshit == 1 && stage.song_step >= -5 && stage.song_step <= -2)
-		Stage_DrawTex(&stage.tex_count, &go_src, &go_dst, stage.bump, -64);
+		Stage_DrawTex(&stage.tex_count, &go_src, &go_dst, stage.bump);
 	else if (drawshit == 1 && stage.song_step >= -2 && stage.song_step <= -1)
-		Stage_BlendTex(&stage.tex_count, &go_src, &go_dst, stage.bump, -64, 1);
+		Stage_BlendTex(&stage.tex_count, &go_src, &go_dst, stage.bump,1);
 }
 
 //Stage loads
@@ -1292,7 +1292,7 @@ static void Stage_LoadSFX(void)
 	for (u8 i = 0; i < 4;i++)
 	{
 		char text[0x80];
-		sprintf(text, "\\SOUNDS\\INTRO%d%s.VAG;1", i;
+		sprintf(text, "\\SOUNDS\\INTRO%d%s.VAG;1", i);
 	  	IO_FindFile(&file, text);
 	    u32 *data = IO_ReadFile(&file);
 	    Sounds[i] = Audio_LoadVAGData(data, file.size);
@@ -1306,10 +1306,7 @@ static void Stage_LoadSFX(void)
 		{
 			char text[0x80];
 			sprintf(text, "\\SOUNDS\\MISS%d.VAG;1", i + 1);
-		  	IO_FindFile(&file, text);
-		    u32 *data = IO_ReadFile(&file);
-		    Sounds[i + 4] = Audio_LoadVAGData(data, file.size);
-		    Mem_Free(data);
+		    Sounds[i + 4] = Audio_LoadSound(text);
 		}
     }
 }
