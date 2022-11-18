@@ -221,6 +221,48 @@ void Gfx_BlendTex(Gfx_Tex *tex, const RECT *src, const RECT *dst, u8 mode)
 	nextpri += sizeof(POLY_FT4);
 }
 
+//yep, i dunno what put here lol
+void Gfx_BlendTexV2(Gfx_Tex *tex, const RECT *src, const RECT *dst, u8 mode, u8 opacity)
+{
+	//Manipulate rects to comply with GPU restrictions
+	RECT csrc, cdst;
+	csrc = *src;
+	cdst = *dst;
+
+	//math to convert "opacity" in colors
+	opacity = (opacity * 10 * 254 / 1000) + 1;
+	//printf("opacity is %d \n", opacity);
+
+	if (dst->w < 0)
+		csrc.x--;
+	if (dst->h < 0)
+		csrc.y--;
+
+	if ((csrc.x + csrc.w) >= 0x100)
+	{
+		csrc.w = 0xFF - csrc.x;
+		cdst.w = cdst.w * csrc.w / src->w;
+	}
+	if ((csrc.y + csrc.h) >= 0x100)
+	{
+		csrc.h = 0xFF - csrc.y;
+		cdst.h = cdst.h * csrc.h / src->h;
+	}
+
+	//Add quad
+	POLY_FT4 *quad = (POLY_FT4*)nextpri;
+	setPolyFT4(quad);
+	setUVWH(quad, csrc.x, csrc.y, csrc.w, csrc.h);
+	setXYWH(quad, cdst.x, cdst.y, cdst.w, cdst.h);
+	setRGB0(quad, opacity, opacity, opacity);
+	setSemiTrans(quad, 1);
+	quad->tpage = tex->tpage | getTPage(0, mode, 0, 0);
+	quad->clut = tex->clut;
+
+	addPrim(ot[db], quad);
+	nextpri += sizeof(POLY_FT4);
+}
+
 void Gfx_BlitTexCol(Gfx_Tex *tex, const RECT *src, s32 x, s32 y, u8 r, u8 g, u8 b)
 {
 	//Add sprite
