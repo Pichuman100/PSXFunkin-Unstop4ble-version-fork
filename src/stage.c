@@ -284,12 +284,12 @@ static u8 Stage_HitNote(PlayerState *this, u8 type, fixed_t offset)
 
 static void Stage_MissNote(PlayerState *this, u8 type)
 {
-	this->max_accuracy += 1;
+	this->max_accuracy += 150;
 	this->refresh_accuracy = true;
 	this->miss += 1;
 	this->refresh_miss = true;
-    
-    if (this->character->spec & CHAR_SPEC_MISSANIM)
+	
+	if (this->character->spec & CHAR_SPEC_MISSANIM)
 		this->character->set_anim(this->character, note_anims[type & 0x3][2]);
 	else
 		this->character->set_anim(this->character, note_anims[type & 0x3][0]);
@@ -922,7 +922,7 @@ static void Stage_DrawNotes(void)
 				{
 					//Missed note
 					Stage_CutVocal();
-					Stage_MissNote(this, type);
+					Stage_MissNote(this, note->type);
 					this->health -= 475;
 					
 				}
