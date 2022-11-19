@@ -17,10 +17,7 @@ void Speaker_Init(Speaker *this)
 	this->bump = 0;
 	
 	//Load speaker graphics
-	if (stage.stage_id >= StageId_5_1 && stage.stage_id <= StageId_5_3)
-		Gfx_LoadTex(&this->tex, IO_Read("\\CHAR\\SPEAKERX.TIM;1"), GFX_LOADTEX_FREE);
-	else
-		Gfx_LoadTex(&this->tex, IO_Read("\\CHAR\\SPEAKER.TIM;1"), GFX_LOADTEX_FREE);
+	Gfx_LoadTex(&this->tex, IO_Read("\\CHAR\\SPEAKER.TIM;1"), GFX_LOADTEX_FREE);
 }
 
 void Speaker_Bump(Speaker *this)
@@ -93,38 +90,17 @@ void Speaker_Tick(Speaker *this, fixed_t x, fixed_t y, fixed_t parallax)
 	const struct SpeakerPiece *piece = speaker_draw[frame];
 	const struct SpeakerPiecex *piecex = speaker_drawx[frame];
 
-	if (stage.stage_id >= StageId_5_1 && stage.stage_id <= StageId_5_3)
+	for (int i = 0; i < 2; i++, piece++)
 	{
+		//Draw piece
+		RECT piece_src = {piece->rect[0], piece->rect[1], piece->rect[2], piece->rect[3]};
+		RECT_FIXED piece_dst = {
+			x - FIXED_DEC(88,1) + ((fixed_t)piece->ox << FIXED_SHIFT) - FIXED_MUL(stage.camera.x, parallax),
+			y + ((fixed_t)piece->oy << FIXED_SHIFT) - FIXED_MUL(stage.camera.y, parallax),
+			(fixed_t)piece->rect[2] << FIXED_SHIFT,
+			(fixed_t)piece->rect[3] << FIXED_SHIFT,
+		};
 		
-		for (int i = 0; i < 2; i++, piecex++)
-		{
-			//Draw piece
-			RECT piecex_src = {piecex->rect[0], piecex->rect[1], piecex->rect[2], piecex->rect[3]};
-			RECT_FIXED piecex_dst = {
-				x - FIXED_DEC(88,1) + ((fixed_t)piecex->ox << FIXED_SHIFT) - FIXED_MUL(stage.camera.x, parallax),
-				y + ((fixed_t)piecex->oy << FIXED_SHIFT) - FIXED_MUL(stage.camera.y, parallax),
-				(fixed_t)piecex->rect[2] << FIXED_SHIFT,
-				(fixed_t)piecex->rect[3] << FIXED_SHIFT,
-			};
-			
-			Stage_DrawTex(&this->tex, &piecex_src, &piecex_dst, stage.camera.bzoom);
-		}
-	}
-	else 	
-	{
-		
-		for (int i = 0; i < 2; i++, piece++)
-		{
-			//Draw piece
-			RECT piece_src = {piece->rect[0], piece->rect[1], piece->rect[2], piece->rect[3]};
-			RECT_FIXED piece_dst = {
-				x - FIXED_DEC(88,1) + ((fixed_t)piece->ox << FIXED_SHIFT) - FIXED_MUL(stage.camera.x, parallax),
-				y + ((fixed_t)piece->oy << FIXED_SHIFT) - FIXED_MUL(stage.camera.y, parallax),
-				(fixed_t)piece->rect[2] << FIXED_SHIFT,
-				(fixed_t)piece->rect[3] << FIXED_SHIFT,
-			};
-			
-			Stage_DrawTex(&this->tex, &piece_src, &piece_dst, stage.camera.bzoom);
-		}
+		Stage_DrawTex(&this->tex, &piece_src, &piece_dst, stage.camera.bzoom);
 	}
 }

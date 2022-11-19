@@ -2346,7 +2346,7 @@ void Stage_Tick(void)
 			
 			stage.song_time = 0;
 
-			Audio_PlaySound(Sounds[9], 0x3fff);
+			Audio_PlaySound(Sounds[8], 0x3fff);
 			Audio_PlayXA_Track(XA_GameOver, 0x40, 1, true);	
 			stage.state = StageState_DeadLoad;
 		}
