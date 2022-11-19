@@ -181,11 +181,9 @@
 				<file name = "intro1.vag" type = "data" source = "iso/sounds/stage/intro1.VAG"/>
 				<file name = "intro2.vag" type = "data" source = "iso/sounds/stage/intro2.VAG"/>
 				<file name = "intro3.vag" type = "data" source = "iso/sounds/stage/intro3.VAG"/>
-				<!-- Weeb Sounds -->
-				<file name = "intro0p.vag" type = "data" source = "iso/sounds/stage/weeb/intro0p.VAG"/>
-				<file name = "intro1p.vag" type = "data" source = "iso/sounds/stage/weeb/intro1p.VAG"/>
-				<file name = "intro2p.vag" type = "data" source = "iso/sounds/stage/weeb/intro2p.VAG"/>
-				<file name = "intro3p.vag" type = "data" source = "iso/sounds/stage/weeb/intro3p.VAG"/>
+				<!-- Other Sounds -->
+				<file name = "death.vag" type = "data" source = "iso/sounds/stage/death.ogg.vag"/>
+				<file name = "retry.vag" type = "data" source = "iso/sounds/stage/retry.ogg.vag"/>
 
 				<!-- Miss Sounds -->
 				<file name = "miss1.vag" type = "data" source = "iso/sounds/stage/miss1.VAG"/>

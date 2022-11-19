@@ -1179,13 +1179,13 @@ static void Stage_CountDown(void)
 	}
 
 	RECT ready_src = {  0,  0,114, 55};	
-	RECT_FIXED ready_dst = {FIXED_DEC(-57,1), FIXED_DEC(-28,1), FIXED_DEC(125 * 2,1), FIXED_DEC(58 * 2,1)};	
+	RECT_FIXED ready_dst = {FIXED_DEC(-114,1), FIXED_DEC(-55,1), FIXED_DEC(114 * 2,1), FIXED_DEC(55 * 2,1)};	
 
 	RECT set_src = {  0, 55, 94, 44};	
-	RECT_FIXED set_dst = {FIXED_DEC(-47,1), FIXED_DEC(-22,1), FIXED_DEC(96 * 2,1), FIXED_DEC(54 * 2,1)};	
+	RECT_FIXED set_dst = {FIXED_DEC(-94,1), FIXED_DEC(-44,1), FIXED_DEC(94 * 2,1), FIXED_DEC(44 * 2,1)};	
 
 	RECT go_src = {115,  0, 46, 35};	
-	RECT_FIXED go_dst = {FIXED_DEC(-23,1), FIXED_DEC(-18,1), FIXED_DEC(95 * 2,1), FIXED_DEC(48 * 2,1)};	
+	RECT_FIXED go_dst = {FIXED_DEC(-46,1), FIXED_DEC(-35,1), FIXED_DEC(46 * 2,1), FIXED_DEC(35 * 2,1)};	
 
 	if (drawshit == 3 && stage.song_step >= -15 && stage.song_step <= -12)
 		Stage_DrawTex(&stage.tex_count, &ready_src, &ready_dst, stage.bump);
@@ -1326,11 +1326,11 @@ static void Stage_LoadSFX(void)
 	for (u8 i = 0; i < 4;i++)
 	{
 		char text[0x80];
-		sprintf(text, "\\SOUNDS\\INTRO%d%s.VAG;1", i);
-	  	IO_FindFile(&file, text);
-	    u32 *data = IO_ReadFile(&file);
-	    Sounds[i] = Audio_LoadVAGData(data, file.size);
-	    Mem_Free(data);
+		sprintf(text, "\\SOUNDS\\INTRO%d.VAG;1", i);
+		IO_FindFile(&file, text);
+		u32 *data = IO_ReadFile(&file);
+		Sounds[i] = Audio_LoadVAGData(data, file.size);
+		Mem_Free(data);
 	}
 
 	//miss sound
@@ -1346,6 +1346,28 @@ static void Stage_LoadSFX(void)
 		    Mem_Free(data);
 		}
     }
+	
+	//death sound
+	if ((stage.stage_id == StageId_6_3) || (stage.stage_id != StageId_6_3))
+	{
+		char text[0x80];
+		sprintf(text, "\\SOUNDS\\DEATH.VAG;1");
+		IO_FindFile(&file, text);
+		u32 *data = IO_ReadFile(&file);
+		Sounds[8] = Audio_LoadVAGData(data, file.size);
+		Mem_Free(data);
+	}
+	
+	//retry sound
+	if ((stage.stage_id == StageId_6_3) || (stage.stage_id != StageId_6_3))
+	{
+		char text[0x80];
+		sprintf(text, "\\SOUNDS\\RETRY.VAG;1");
+		IO_FindFile(&file, text);
+		u32 *data = IO_ReadFile(&file);
+		Sounds[9] = Audio_LoadVAGData(data, file.size);
+		Mem_Free(data);
+	}
 }
 
 static void Stage_LoadMusic(void)
@@ -1691,7 +1713,7 @@ void Stage_Tick(void)
 		{
 			inctimer = true;
 			Audio_StopXA();
-			Audio_PlaySound(Sounds[1], 0x3fff);
+			Audio_PlaySound(Sounds[9], 0x3fff);
 		}
 	}
 	else if (pad_state.press & PAD_CIRCLE && stage.state != StageState_Play)
@@ -2324,6 +2346,7 @@ void Stage_Tick(void)
 			
 			stage.song_time = 0;
 
+			Audio_PlaySound(Sounds[9], 0x3fff);
 			Audio_PlayXA_Track(XA_GameOver, 0x40, 1, true);	
 			stage.state = StageState_DeadLoad;
 		}
