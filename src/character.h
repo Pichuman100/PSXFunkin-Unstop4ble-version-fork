@@ -53,7 +53,7 @@ typedef struct Character
 	u32 health_bar; //hud1.tim
 	fixed_t focus_x, focus_y, focus_zoom;
 	
-	fixed_t size;
+	fixed_t size, idle2;
 	
 	//Animation state
 	Animatable animatable;
