@@ -1538,8 +1538,8 @@ void Stage_Load(StageId id, StageDiff difficulty, boolean story)
 	Stage_LoadSFX();
 
 	//load fonts
-	FontData_Load(&stage.font_cdr, Font_CDR);
-	FontData_Load(&stage.font_bold, Font_Bold);
+	FontData_Load(&stage.font_cdr, Font_CDR, true);
+	FontData_Load(&stage.font_bold, Font_Bold, false);
 
 	//Load characters
 	Stage_LoadPlayer();
@@ -2026,8 +2026,10 @@ void Stage_Tick(void)
 			
 			if (playing && (stage.flag & STAGE_FLAG_JUST_STEP))
 			{
+				boolean is_bump_step;
+				
 				//Check if screen should bump
-				boolean is_bump_step = (stage.song_step & 0xF) == 0;
+				is_bump_step = (stage.song_step & 0xF) == 0;
 				
 				//Bump screen
 				if (is_bump_step)
@@ -2063,9 +2065,9 @@ void Stage_Tick(void)
 				{
 					stage.font_cdr.draw(&stage.font_cdr,
 						this->score_text,
-						(stage.mode == StageMode_2P && i == 0) ? FIXED_DEC(10,1) : FIXED_DEC(-150,1), 
-						(screen.SCREEN_HEIGHT2 - 22) << FIXED_SHIFT,
-						FontAlign_Left
+						(stage.mode == StageMode_2P && i == 0) ? 10 : -150,
+						(screen.SCREEN_HEIGHT2 - 22),
+						FontAlign_Left 
 					);
 				}
 			}
@@ -2088,8 +2090,8 @@ void Stage_Tick(void)
 				{
 					stage.font_cdr.draw(&stage.font_cdr,
 						this->miss_text,
-						(stage.mode == StageMode_2P && i == 0) ? FIXED_DEC(100,1) : FIXED_DEC(-60,1), 
-						(screen.SCREEN_HEIGHT2 - 22) << FIXED_SHIFT,
+						(stage.mode == StageMode_2P && i == 0) ? 100 : -60, 
+						(screen.SCREEN_HEIGHT2 - 22),
 						FontAlign_Left
 					);
 				}
@@ -2125,8 +2127,8 @@ void Stage_Tick(void)
 				{
 					stage.font_cdr.draw(&stage.font_cdr,
 						this->accuracy_text,
-						(stage.mode == StageMode_2P && i == 0) ? FIXED_DEC(50,1) : (stage.mode == StageMode_2P && i == 1) ? FIXED_DEC(-110,1) : FIXED_DEC(39,1), 
-						(stage.mode == StageMode_2P) ? FIXED_DEC(85,1) : (screen.SCREEN_HEIGHT2 - 22) << FIXED_SHIFT,
+						(stage.mode == StageMode_2P && i == 0) ? 50 : (stage.mode == StageMode_2P && i == 1) ? -110 : 39, 
+						(stage.mode == StageMode_2P) ? 85,1 : (screen.SCREEN_HEIGHT2 - 22),
 						FontAlign_Left
 					);
 				}

@@ -32,9 +32,10 @@ typedef struct FontData
 	void (*draw)(struct FontData *this, const char *text, s32 x, s32 y, FontAlign align);
 	
 	Gfx_Tex tex;
+	boolean is_stage;
 } FontData;
 
 //Font functions
-void FontData_Load(FontData *this, Font font);
+void FontData_Load(FontData *this, Font font, boolean is_stage);
 
 #endif

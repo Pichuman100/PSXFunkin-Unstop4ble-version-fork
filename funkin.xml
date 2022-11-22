@@ -30,7 +30,6 @@
 			<!-- Fonts -->
 			<dir name = "font">
 				<file name = "font.tim" type = "data" source = "iso/font/font.tim"/>
-				<file name = "arial.tim" type = "data" source = "iso/font/arial.tim"/>
 			</dir>
 			
 			<!-- Stage assets -->

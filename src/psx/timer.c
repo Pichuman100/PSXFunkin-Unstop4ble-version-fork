@@ -131,16 +131,16 @@ void StageTimer_Draw()
 	sprintf(timer.timer_display, "%d", timer.timermin);
 	stage.font_cdr.draw(&stage.font_cdr,
 		timer.timer_display,
-		FIXED_DEC(-1 - 10,1) + stage.noteshakex, 
-		FIXED_DEC(-109,1) + stage.noteshakey,
+		-1 - 10 + stage.noteshakex, 
+		-109 + stage.noteshakey,
 		FontAlign_Left
 	);
 	sprintf(timer.timer_display, ":");
 	stage.font_cdr.draw(&stage.font_cdr,
 		timer.timer_display,
 
-		FIXED_DEC(-1,1) + stage.noteshakex,
-		FIXED_DEC(-109,1) + stage.noteshakey,
+		-1 + stage.noteshakex,
+		-109 + stage.noteshakey,
 		FontAlign_Left
 	);
 	if (timer.timersec >= 10)
@@ -150,8 +150,8 @@ void StageTimer_Draw()
 
 	stage.font_cdr.draw(&stage.font_cdr,
 		timer.timer_display,
-		FIXED_DEC(-1 + 7,1) + stage.noteshakex,
-		FIXED_DEC(-109,1) + stage.noteshakey,
+		-1 + 7 + stage.noteshakex,
+		-109 + stage.noteshakey,
 		FontAlign_Left
 	);
 	if (stage.prefs.downscroll)

@@ -3,7 +3,6 @@ all: \
 	iso/menu/loading.tim \
 	iso/icon16.tim \
 	iso/font/font.tim \
-	iso/font/arial.tim \
 	iso/stage/hud0.tim \
 	iso/stage/hud1-1.tim \
 	iso/stage/hud1-2.tim \

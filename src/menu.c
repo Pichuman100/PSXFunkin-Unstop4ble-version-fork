@@ -114,7 +114,7 @@ static struct
 	
 	//Menu assets
 	Gfx_Tex tex_back, tex_ng, tex_story, tex_title;
-	FontData font_bold, font_arial;
+	FontData font_bold, font_arial, font_cdr;
 	
 	Character *gf; //Title Girlfriend
 } menu;
@@ -263,8 +263,9 @@ void Menu_Load(MenuPage page)
 	Gfx_LoadTex(&menu.tex_title, Archive_Find(menu_arc, "title.tim"), 0);
 	Mem_Free(menu_arc);
 	
-	FontData_Load(&menu.font_bold, Font_Bold);
-	FontData_Load(&menu.font_arial, Font_Arial);
+	FontData_Load(&menu.font_bold, Font_Bold, false);
+	FontData_Load(&menu.font_arial, Font_Arial, false);
+	FontData_Load(&menu.font_cdr, Font_CDR, false);
 	
 	menu.gf = Char_GF_New(FIXED_DEC(62,1), FIXED_DEC(-12,1));
 	stage.camera.x = stage.camera.y = FIXED_DEC(0,1);
