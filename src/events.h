@@ -6,6 +6,7 @@
 
 #ifndef PSXF_GUARD_EVENTS_H
 #define PSXF_GUARD_EVENTS_H
+
 #include "psx.h"
 #include "fixed.h"
 
@@ -13,8 +14,12 @@
 #define EVENTS_FLAG_VARIANT 0xFFFC
 
 #define EVENTS_FLAG_SPEED     (1 << 2) //Change Scroll Speed
+#define EVENTS_FLAG_GF        (1 << 3) //Set GF Speed
+#define EVENTS_FLAG_CAMZOOM   (1 << 4) //Add Camera Zoom
 
 #define EVENTS_FLAG_PLAYED    (1 << 15) //Event has been already played
+
+//Psych Engine Events Reader By IgorSou3000
 
 typedef struct
 {
@@ -23,18 +28,11 @@ typedef struct
   u16 event;
   u16 value1;
   u16 value2;
-} Event;
+}Event;
 
-//Psych Engine Events Reader By IgorSou3000
 typedef struct
 {
-  //Scroll Speed!!
-  struct
-  {
-    fixed_t ogspd;
-    fixed_t value1, value2;
-  }speed;
-
+  fixed_t value1, value2;
 }Events;
 
 void Events_ScrollSpeed(void);
@@ -43,9 +41,6 @@ void Events_Tick(void);
 void Events_StartEvents(void);
 void Events_Load(void);
 
-void Events_FG(void);
-void Events_BG(void);
-
-extern Events events;
+extern Events event_speed;
 
 #endif

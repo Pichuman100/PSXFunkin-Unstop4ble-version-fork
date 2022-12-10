@@ -8,13 +8,15 @@
 #include "stage.h"
 #include "timer.h"
 #include "random.h"
+#include "mutil.h"
 
- Events events;
+Events event_speed;
 
 void Events_Tick(void)
 {
 	//Scroll Speed!
-	stage.speed += (FIXED_MUL(events.speed.ogspd, events.speed.value1) - stage.speed) / ((events.speed.value2) / 64 + 1);
+	stage.speed += (FIXED_MUL(stage.ogspeed, event_speed.value1) - stage.speed) / (((event_speed.value2 / 60) + 1));
+
 }
 
 void Events_StartEvents(void)
@@ -29,24 +31,36 @@ void Events_StartEvents(void)
 			stage.cur_event++;
 
 		if (event->event & EVENTS_FLAG_PLAYED)
-			continue;
+		continue;
 
-		//Events
-		switch(event->event & EVENTS_FLAG_VARIANT)
-		{
-			case EVENTS_FLAG_SPEED: //Scroll Speed!!
+			//Events
+			switch(event->event & EVENTS_FLAG_VARIANT)
 			{
-				events.speed.value1 = event->value1;
-				events.speed.value2 = event->value2;
-				break;
+				case EVENTS_FLAG_SPEED: //Scroll Speed!!
+				{
+					event_speed.value1 = event->value1;
+					event_speed.value2 = event->value2;
+					break;
+				}
+				case EVENTS_FLAG_GF: //Set GF Speed!!
+				{
+					//So easy LOL
+					stage.gf_speed = (event->value1 / FIXED_UNIT) * 4;
+					break;
+				}
+				case EVENTS_FLAG_CAMZOOM: //Add Camera Zoom!!
+				{
+					//So easy LOL
+					stage.charbump += event->value1;
+					stage.bump += event->value2;
+					break;
+				}
+				default: //nothing lol
+					break;
 			}
-			default: //nothing lol
-				break;
-		}
 
-			event->event |= EVENTS_FLAG_PLAYED;
+				event->event |= EVENTS_FLAG_PLAYED;
 	}
-
 	Events_Tick();
 }
 
@@ -54,7 +68,6 @@ void Events_StartEvents(void)
 void Events_Load(void)
 {
 	//Scroll Speed
-	events.speed.ogspd = stage.speed;
-	events.speed.value1 = FIXED_UNIT;
-	events.speed.value2 = 0;
+	event_speed.value1 = FIXED_UNIT;
+	event_speed.value2 = 0;
 }

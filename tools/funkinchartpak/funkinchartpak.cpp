@@ -1,6 +1,8 @@
 /*
  * funkinchtpak by Regan "CuckyDev" Green
  * Packs Friday Night Funkin' json formatted charts into a binary file for the PSX port
+
+ *Psych Engine Event Reader By IgorSou3000
 */
 
 #include <iostream>
@@ -29,23 +31,25 @@ struct Section
 #define NOTE_FLAG_MINE        (1 << 6) //Note is a mine
 #define NOTE_FLAG_HIT         (1 << 7) //Note has been hit
 
+struct Note
+{
+	uint16_t pos; //1/12 steps
+	uint16_t type;
+};
+
 //EVENTS
 #define EVENTS_FLAG_VARIANT 0xFFFC
 
 #define EVENTS_FLAG_SPEED     (1 << 2) //Change Scroll Speed
+#define EVENTS_FLAG_GF        (1 << 3) //Set GF Speed
+#define EVENTS_FLAG_CAMZOOM   (1 << 4) //Add Camera Zoom
 
 #define EVENTS_FLAG_PLAYED     (1 << 15) //Event has been already played
-
-struct Note
-{
-	uint16_t pos; // 1/12 steps
-	uint8_t type, pad = 0;
-};
 
 struct Event
 {
 	//psych engine events
-	uint16_t pos; // 1/12 steps
+	uint16_t pos; //1/12 steps
 	uint16_t event;
 	uint16_t value1;
 	uint16_t value2;
@@ -143,18 +147,23 @@ int main(int argc, char *argv[])
 		{
 			//Push main note
 			Note new_note;
+
+			//invalid type
+			if (j[1] < 0)
+				continue;
+			
 			int sustain = (int)PosRound(j[2], step_crochet) - 1;
 			new_note.pos = (step_base * 12) + PosRound(((double)j[0] - milli_base) * 12.0, step_crochet);
 			new_note.type = (uint8_t)j[1] & (3 | NOTE_FLAG_OPPONENT);
 			if (is_opponent)
 				new_note.type ^= NOTE_FLAG_OPPONENT;
-			if (j[3] == true)
+			if (j[3] == true || j[3] == "Alt Animation")
 				new_note.type |= NOTE_FLAG_ALT_ANIM;
 			else if ((new_note.type & NOTE_FLAG_OPPONENT) && is_alt)
 				new_note.type |= NOTE_FLAG_ALT_ANIM;
 			if (sustain >= 0)
 				new_note.type |= NOTE_FLAG_SUSTAIN_END;
-			if (((uint8_t)j[1]) & 8)
+			if (((uint8_t)j[1]) & 8 || j[3] == "Hurt Note")
 				new_note.type |= NOTE_FLAG_MINE;
 			
 			if (note_fudge.count(*((uint32_t*)&new_note)))
@@ -171,12 +180,12 @@ int main(int argc, char *argv[])
 			//Push sustain notes
 			for (int k = 0; k <= sustain; k++)
 			{
-				Note sus_note; //jerma
-				sus_note.pos = new_note.pos + ((k + 1) * 12);
-				sus_note.type = new_note.type | NOTE_FLAG_SUSTAIN;
+				Note sustain_note;
+				sustain_note.pos = new_note.pos + ((k + 1) * 12);
+				sustain_note.type = new_note.type | NOTE_FLAG_SUSTAIN;
 				if (k != sustain)
-					sus_note.type &= ~NOTE_FLAG_SUSTAIN_END;
-				notes.push_back(sus_note);
+					sustain_note.type &= ~NOTE_FLAG_SUSTAIN_END; //sustain didn't end yet
+				notes.push_back(sustain_note);
 			}
 		}
 	}
@@ -189,7 +198,7 @@ int main(int argc, char *argv[])
 		else
 			return a.pos < b.pos;
 	});
-	
+
 	//Read Events lol
 	for (auto &i : song_info["events"]) //Iterate through sections
 	{
@@ -202,31 +211,57 @@ int main(int argc, char *argv[])
 
 			new_event.pos = (step_base * 12) + PosRound(((double)i[0] - milli_base) * 12.0, step_crochet);
 
-			//get values information
-			std::string value1 =  j[1];
-			std::string value2 =  j[2];
-
 			if (j[0] == "Change Scroll Speed")
 				new_event.event |= EVENTS_FLAG_SPEED;
 
-			if (new_event.event & EVENTS_FLAG_SPEED)
+			if (j[0] == "Set GF Speed")
+				new_event.event |= EVENTS_FLAG_GF;
+
+			if (j[0] == "Add Camera Zoom")
+				new_event.event |= EVENTS_FLAG_CAMZOOM;
+
+			if (new_event.event & EVENTS_FLAG_VARIANT)
 			{
-				//Default values
-				if (j[1] == "")
-					j[1] = "1";
+				if (new_event.event & EVENTS_FLAG_SPEED)
+				{
+					//Default values
+					if (j[1] == "")
+						j[1] = "1";
 
-				if (j[2] == "")
-					j[2] = "0";
+					if (j[2] == "")
+						j[2] = "0";
+				}
 
-				//fixed value by 1024 to work perfect 
+				if (new_event.event & EVENTS_FLAG_GF)
+				{
+					//Default values
+					if (j[1] == "")
+						j[1] = "1";
+
+					if (j[2] == "")
+						j[2] = "0";
+				}
+				if (new_event.event & EVENTS_FLAG_CAMZOOM)
+				{
+					//Default values
+					if (j[1] == "")
+						j[1] = "0.015"; //cam zoom
+
+					if (j[2] == "")
+						j[2] = "0.03"; //hud zoom
+				}
+
+				//Get values information
+				std::string value1 =  j[1];
+				std::string value2 =  j[2];
+
+				//fixed values by 1024
 				new_event.value1 = std::stof(value1) * FIXED_UNIT;
-
-				//make milliseconds instead seconds
 				new_event.value2 = std::stof(value2) * FIXED_UNIT;
-				std::cout << "founded event!: " << j[0] <<" step of event: " << new_event.pos / 12 << std::endl;
-			}
+				std::cout << "founded event!: " << j[0] << '\n';
 
-			events.push_back(new_event);
+				events.push_back(new_event);
+			}
 		}
 	}
 	
@@ -240,7 +275,7 @@ int main(int argc, char *argv[])
 	dum_note.pos = 0xFFFF;
 	dum_note.type = NOTE_FLAG_HIT;
 	notes.push_back(dum_note);
-	
+
 	Event dum_event;
 	dum_event.pos = 0xFFFF;
 	dum_event.event = EVENTS_FLAG_PLAYED;
@@ -248,17 +283,17 @@ int main(int argc, char *argv[])
 	events.push_back(dum_event);
 	
 	//Write to output
-	std::ofstream out(std::string(argv[1]) + ".cht", std::ostream::binary);
+	std::ofstream out(std::string(argv[1]) + ".cht",  std::ostream::binary);
 	if (!out.is_open())
 	{
-		std::cout << "Failed to open " << argv[1] << ".cht" << std::endl;
+		std::cout << "Failed to open " << argv[1]  << ".cht" << std::endl;
 		return 1;
 	}
 	
 	//Write header
-	WriteLong(out, (fixed_t)(speed * FIXED_UNIT));
-	WriteWord(out, 8 + (sections.size() << 2));
-	WriteWord(out, (notes.size() << 2));
+	WriteLong(out, (fixed_t)(speed * FIXED_UNIT)); //first 4 bytes
+	WriteWord(out, 8 + (sections.size() * 4)); //skip speed bytes, the notes size byte and that bytes (2 bytes) + section size * 4
+	WriteWord(out, notes.size() * 4);
 	
 	//Write sections
 	for (auto &i : sections)
@@ -271,10 +306,9 @@ int main(int argc, char *argv[])
 	for (auto &i : notes)
 	{
 		WriteWord(out, i.pos);
-		out.put(i.type);
-		out.put(0);
+		WriteWord(out, i.type);
 	}
-	
+
 	//Write events
 	for (auto &i : events)
 	{
@@ -283,6 +317,6 @@ int main(int argc, char *argv[])
 		WriteWord(out,i.value1);
 		WriteWord(out,i.value2);
 	}
-	
+
 	return 0;
 }

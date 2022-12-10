@@ -7,6 +7,7 @@
 #ifndef PSXF_GUARD_STAGE_H
 #define PSXF_GUARD_STAGE_H
 
+#include "events.h"
 #include "io.h"
 #include "gfx.h"
 #include "pad.h"
@@ -218,7 +219,7 @@ typedef struct
 	size_t num_notes;
 	Event* events;
 	
-	fixed_t speed;
+	fixed_t speed, ogspeed;
 	fixed_t step_crochet, step_time;
 	fixed_t early_safe, late_safe, early_sus_safe, late_sus_safe;
 	
@@ -236,7 +237,7 @@ typedef struct
 		fixed_t tx, ty, tz, td;
 		fixed_t bzoom;
 	} camera;
-	fixed_t bump, sbump;
+	fixed_t bump, sbump, charbump;
 	
 	StageBack *back;
 	

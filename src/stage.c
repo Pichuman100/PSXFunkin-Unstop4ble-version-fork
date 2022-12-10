@@ -138,7 +138,7 @@ static void Stage_ScrollCamera(void)
 	}
 		
 	//Update other camera stuff
-	stage.camera.bzoom = FIXED_MUL(stage.camera.zoom, stage.bump);
+	stage.camera.bzoom = FIXED_MUL(stage.camera.zoom, stage.charbump);
 
 }
 
@@ -1283,6 +1283,7 @@ static void Stage_LoadChart(void)
 		
 		for (Note *note = stage.notes; note->pos != 0xFFFF; note++)
 			stage.num_notes++;
+		
 	
 	//Count max scores
 	stage.player_state[0].max_score = 0;
@@ -1305,7 +1306,7 @@ static void Stage_LoadChart(void)
 	stage.cur_note = stage.notes;
 	stage.cur_event = stage.events;
 	
-	stage.speed = *((fixed_t*)stage.chart_data);
+	stage.speed = stage.ogspeed = *((fixed_t*)stage.chart_data); //Get the speed value (4 bytes)
 	
 	stage.step_crochet = 0;
 	stage.time_base = 0;
@@ -2024,6 +2025,9 @@ void Stage_Tick(void)
 				stage.bump = FIXED_UNIT;
 			stage.sbump = FIXED_UNIT + FIXED_MUL(stage.sbump - FIXED_UNIT, FIXED_DEC(60,100));
 			
+			if ((stage.charbump = FIXED_UNIT + FIXED_MUL(stage.charbump - FIXED_UNIT, FIXED_DEC(95,100))) <= FIXED_DEC(1003,1000))
+				stage.charbump = FIXED_UNIT;
+			
 			if (playing && (stage.flag & STAGE_FLAG_JUST_STEP))
 			{
 				boolean is_bump_step;
@@ -2033,7 +2037,10 @@ void Stage_Tick(void)
 				
 				//Bump screen
 				if (is_bump_step)
+				{
 					stage.bump = FIXED_DEC(103,100);
+					stage.charbump += FIXED_DEC(15,1000); //0.015
+				}
 
 				//Bump health every 4 steps
 				if ((stage.song_step & 0x3) == 0)
