@@ -12,8 +12,8 @@ static void Drawdebugtxt()
 	sprintf(debug.debugtext, "Welcome to PSXFunkin debug mode!");
 	stage.font_cdr.draw(&stage.font_cdr,
 		debug.debugtext,
-		FIXED_DEC(-158, 1),
-		FIXED_DEC(-105, 1),
+		-158,
+		-105,
 		FontAlign_Left
 	);
 	if (debug.mode == 0)
@@ -21,29 +21,29 @@ static void Drawdebugtxt()
 		sprintf(debug.debugtext, "Transform objects with dpad and face buttons, switch objects");
 		stage.font_cdr.draw(&stage.font_cdr,
 			debug.debugtext,
-			FIXED_DEC(-158, 1),
-			FIXED_DEC(-105 + 10, 1),
+			-158,
+			-105 + 10,
 			FontAlign_Left
 		);
 		sprintf(debug.debugtext, "with L1 and R1, switch debug modes with L2 and R2,");
 		stage.font_cdr.draw(&stage.font_cdr,
 			debug.debugtext,
-			FIXED_DEC(-158, 1),
-			FIXED_DEC(-105 + 20, 1),
+			-158,
+			-105 + 20,
 			FontAlign_Left
 		);
 		sprintf(debug.debugtext, "Focus camera with select");
 		stage.font_cdr.draw(&stage.font_cdr,
 			debug.debugtext,
-			FIXED_DEC(-158, 1),
-			FIXED_DEC(-105 + 30, 1),
+			-158,
+			-105 + 30,
 			FontAlign_Left
 		);
 		sprintf(debug.debugtext, "x %d, y %d, w %d, h %d, selection %d, mode %d", debug.debugx, debug.debugy, debug.debugw, debug.debugh, debug.selection, debug.mode);
 		stage.font_cdr.draw(&stage.font_cdr,
 			debug.debugtext,
-			FIXED_DEC(-158, 1),
-			FIXED_DEC(-105 + 40, 1),
+			-158,
+			-105 + 40,
 			FontAlign_Left
 		);
 		stage.freecam = 0;
@@ -53,22 +53,22 @@ static void Drawdebugtxt()
 		sprintf(debug.debugtext, "Move the camera with the dpad,");
 		stage.font_cdr.draw(&stage.font_cdr,
 			debug.debugtext,
-			FIXED_DEC(-158, 1),
-			FIXED_DEC(-105 + 10, 1),
+			-158,
+			-105 + 10,
 			FontAlign_Left
 		);
 		sprintf(debug.debugtext, "switch debug modes with L2 and R2");
 		stage.font_cdr.draw(&stage.font_cdr,
 			debug.debugtext,
-			FIXED_DEC(-158, 1),
-			FIXED_DEC(-105 + 20, 1),
+			-158,
+			-105 + 20,
 			FontAlign_Left
 		);
 		sprintf(debug.debugtext, "x %d, y %d, zoom %d, mode %d", stage.camera.x / 1024, stage.camera.y / 1024, stage.camera.bzoom, debug.mode);
 		stage.font_cdr.draw(&stage.font_cdr,
 			debug.debugtext,
-			FIXED_DEC(-158, 1),
-			FIXED_DEC(-105 + 30, 1),
+			-158,
+			-105 + 30,
 			FontAlign_Left
 		);
 		stage.freecam = 1;
