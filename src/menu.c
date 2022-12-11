@@ -935,31 +935,28 @@ void Menu_Tick(void)
 				const char *text;
 				boolean difficulty;
 			} menu_options[] = {
+				{StageId_1_1, "PORT DEV", false},
+				{StageId_1_1, "    PICHUMANTEN", false},
+				{StageId_1_1, "HELP", false},
+				{StageId_1_1, "    IGORSOU", false},
+				{StageId_1_1, "PSXFUNKIN CREATOR", false},
+				{StageId_1_1, "    CUCKYDEV", false},
 				{StageId_1_1, "FORK DEVS", false},
 				{StageId_1_1, "    UNSTOPABLE", false},
 				{StageId_1_1, "    IGORSOU", false},
 				{StageId_1_1, "    SPICYJPEG", false},
 				{StageId_1_1, "    SPARK", false},
-				{StageId_1_1, "PSXFUNKIN DEVELOPER", false},
-				{StageId_1_1, "    CUCKYDEV", false},
-				{StageId_1_1, "COOL PEOPLE", false},
+				{StageId_1_1, "OTHER COOL PEOPLE", false},
 				{StageId_1_1, "    IGORSOU", false},
-				{StageId_1_1, "    SPARK", false},
-				{StageId_1_1, "    DREAMCASTNICK", false},
-				{StageId_1_1, "    MAXDEV", false},
-				{StageId_1_1, "    CUCKYDEV", false},
+				{StageId_1_1, "    UNSTOPABLE", false},
 				{StageId_1_1, "    LUCKY", false},
-				{StageId_1_1, "    MRRUMBLEROSES", false},
-				{StageId_1_1, "    JOHN PAUL", false},
-				{StageId_1_1, "    VICTOR", false},
-				{StageId_1_1, "    GOOMBAKUNGFU", false},
-				{StageId_1_1, "    GTHREEYT", false},
-				{StageId_1_1, "    BILIOUS", false},
-				{StageId_1_1, "    ZERIBEN", false},
-				{StageId_1_1, "    GALAXY YT", false},
+				{StageId_1_1, "    GEYT", false},
+				{StageId_1_1, "    DREAMCASTNICK", false},
 				{StageId_1_1, "    NINTENDOBRO", false},
-				{StageId_1_1, "    LORD SCOUT", false},
-				{StageId_1_1, "    MR P", false},
+				{StageId_1_1, "    MAXDEV", false},
+				{StageId_1_1, "    MRRUMBLEROSES", false},
+				{StageId_1_1, "OG MOD TEAM", false},
+				{StageId_1_1, "    PERSON", false},
 			};
 			    
 			//Initialize page
@@ -1082,7 +1079,7 @@ void Menu_Tick(void)
 				{OptType_Boolean, "PRACTICE MODE", &stage.prefs.practice, {.spec_boolean = {0}}},
 				{OptType_Boolean, "DEBUG MODE", &stage.prefs.debug, {.spec_boolean = {0}}},
 			};
-			if (menu.select == 5 && pad_state.press & (PAD_CROSS | PAD_LEFT | PAD_RIGHT))
+			if (menu.select == 6 && pad_state.press & (PAD_CROSS | PAD_LEFT | PAD_RIGHT))
 				stage.pal_i = 1;
 
 			if (stage.mode == StageMode_2P)
