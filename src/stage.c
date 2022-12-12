@@ -1449,7 +1449,9 @@ static void Stage_LoadState(void)
 		drawshit = 0;
 		if (!stage.prefs.debug)
 			stage.freecam = 0;
+		stage.player_state[i].refresh_miss = false;
 		stage.player_state[i].miss = 0;
+		stage.player_state[i].refresh_accuracy = false;
 		stage.player_state[i].accuracy = 0;
 		stage.player_state[i].max_accuracy = 0;
 		stage.player_state[i].min_accuracy = 0;
