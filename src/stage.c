@@ -1169,14 +1169,14 @@ static void Stage_CountDown(void)
 			break;
 	}
 
-	RECT ready_src = {  0,  0,114, 55};	
-	RECT_FIXED ready_dst = {FIXED_DEC(-114,1), FIXED_DEC(-55,1), FIXED_DEC(114 * 2,1), FIXED_DEC(55 * 2,1)};	
+	RECT ready_src = {  0,  0,142, 68};	
+	RECT_FIXED ready_dst = {FIXED_DEC(-89,1), FIXED_DEC(-43,1), FIXED_DEC(142 * 125,100), FIXED_DEC(68 * 125,100)};	
 
-	RECT set_src = {  0, 55, 94, 44};	
-	RECT_FIXED set_dst = {FIXED_DEC(-94,1), FIXED_DEC(-44,1), FIXED_DEC(94 * 2,1), FIXED_DEC(44 * 2,1)};	
+	RECT set_src = {  0, 69,132, 61};	
+	RECT_FIXED set_dst = {FIXED_DEC(-83,1), FIXED_DEC(-38,1), FIXED_DEC(132 * 125,100), FIXED_DEC(61 * 125,100)};	
 
-	RECT go_src = {115,  0, 46, 35};	
-	RECT_FIXED go_dst = {FIXED_DEC(-46,1), FIXED_DEC(-35,1), FIXED_DEC(46 * 2,1), FIXED_DEC(35 * 2,1)};	
+	RECT go_src = {  0,131, 58, 45};	
+	RECT_FIXED go_dst = {FIXED_DEC(-36,1), FIXED_DEC(-28,1), FIXED_DEC(58 * 125,100), FIXED_DEC(45 * 125,100)};	
 
 	if (drawshit == 3 && stage.song_step >= -15 && stage.song_step <= -12)
 		Stage_DrawTex(&stage.tex_count, &ready_src, &ready_dst, stage.bump);
@@ -1379,7 +1379,7 @@ static void Stage_LoadMusic(void)
 	
 	//Initialize music state
 		//added more steps and disable intro
-	if (stage.song_step == 9999999999)
+	if (stage.stage_id == StageId_6_3) //PLACEHOLDER
 	{
 		stage.intro = true;
 		stage.note_scroll = FIXED_DEC(-5 * 6 * 12,1);
@@ -1795,9 +1795,6 @@ void Stage_Tick(void)
 					case 0:
 						PausedState();
 						break;
-                    case 1:
-							OptionsState(&note_x);
-							break;
 				}
 			}
 			
@@ -1813,7 +1810,7 @@ void Stage_Tick(void)
 			//^ makes step show on screen
 			
 			//Draw white fade
-			if (stage.song_step == 999999999)
+			if (stage.stage_id == StageId_6_3) //PLACEHOLDER
 			{
 				fade = FIXED_DEC(255,1);
 				fadespd = FIXED_DEC(175,1);
@@ -1830,7 +1827,7 @@ void Stage_Tick(void)
 			if (stage.intro)
 				Stage_CountDown();
 			
-			if (stage.song_step == 9999999999)
+			if (stage.stage_id == StageId_6_3) //PLACEHOLDER
 			{
 				show = false;
 			}
@@ -2128,7 +2125,7 @@ void Stage_Tick(void)
 					stage.font_cdr.draw(&stage.font_cdr,
 						this->accuracy_text,
 						(stage.mode == StageMode_2P && i == 0) ? 50 : (stage.mode == StageMode_2P && i == 1) ? -110 : 39, 
-						(stage.mode == StageMode_2P) ? 85,1 : (screen.SCREEN_HEIGHT2 - 22),
+						(screen.SCREEN_HEIGHT2 - 22),
 						FontAlign_Left
 					);
 				}
@@ -2305,7 +2302,7 @@ void Stage_Tick(void)
 			//Player 2 and Opponent 2 Switches
 			if (stage.stage_id == StageId_6_3)
 			{
-				if (stage.song_step == 9999999)
+				if (stage.stage_id == StageId_6_3) //PLACEHOLDER
 					stage.player_state[0].character = Stage_ChangeChars(stage.player_state[1].character, stage.player2);
 			}
 			break;
