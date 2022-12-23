@@ -205,6 +205,28 @@ Character *Char_GF_New(fixed_t x, fixed_t y)
 	for (; *pathp != NULL; pathp++)
 		*arc_ptr++ = Archive_Find(this->arc_main, *pathp);
 	
+	//Load scene specific art
+	switch (stage.stage_id)
+	{
+//		case StageId_1_4: //Tutorial
+//		{
+//			this->arc_scene = IO_Read("\\CHAR\\GFTUT.ARC;1");
+//			
+//			const char **pathp = (const char *[]){
+//				"tut0.tim", //GF_ArcScene_0
+//				"tut1.tim", //GF_ArcScene_1
+//				NULL
+//			};
+//			IO_Data *arc_ptr = &this->arc_ptr[GF_ArcScene_0];
+//			for (; *pathp != NULL; pathp++)
+//				*arc_ptr++ = Archive_Find(this->arc_scene, *pathp);
+//			break;
+//		}
+		default:
+			this->arc_scene = NULL;
+			break;
+	}
+	
 	//Initialize render state
 	this->tex_id = this->frame = 0xFF;
 	

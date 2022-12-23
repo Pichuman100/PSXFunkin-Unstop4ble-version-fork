@@ -1810,11 +1810,11 @@ void Stage_Tick(void)
 			//^ makes step show on screen
 			
 			//Draw white fade
-			if (stage.stage_id == StageId_6_3) //PLACEHOLDER
-			{
-				fade = FIXED_DEC(255,1);
-				fadespd = FIXED_DEC(175,1);
-			}
+//			if (stage.stage_id == StageId_6_3) //PLACEHOLDER
+//			{
+//				fade = FIXED_DEC(255,1);
+//				fadespd = FIXED_DEC(175,1);
+//			}
 			if (stage.prefs.flash != 0)
 				if (fade > 0)
 				{
@@ -2300,11 +2300,11 @@ void Stage_Tick(void)
 			StageTimer_Tick();
 			
 			//Player 2 and Opponent 2 Switches
-			if (stage.stage_id == StageId_6_3)
-			{
-				if (stage.stage_id == StageId_6_3) //PLACEHOLDER
-					stage.player_state[0].character = Stage_ChangeChars(stage.player_state[1].character, stage.player2);
-			}
+//			if (stage.stage_id == StageId_6_3) //PLACEHOLDER
+//			{
+//				if (stage.stage_id == StageId_6_3) //PLACEHOLDER
+//					stage.player_state[0].character = Stage_ChangeChars(stage.player_state[1].character, stage.player2);
+//			}
 			break;
 		}
 		case StageState_Dead: //Start BREAK animation and reading extra data from CD
