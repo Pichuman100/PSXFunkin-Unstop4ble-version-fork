@@ -71,6 +71,8 @@ typedef enum
 	StageId_6_2, //Roses
 	StageId_6_3, //Thorns
 	
+	StageId_Temp, //Placeholder
+	
 	StageId_Max
 } StageId;
 
