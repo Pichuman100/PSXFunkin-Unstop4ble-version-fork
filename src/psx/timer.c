@@ -132,7 +132,7 @@ void StageTimer_Draw()
 	stage.font_cdr.draw(&stage.font_cdr,
 		timer.timer_display,
 		-1 - 10 + stage.noteshakex, 
-		-109 + stage.noteshakey,
+		(stage.prefs.downscroll) ? 100 + stage.noteshakey : -109 + stage.noteshakey,
 		FontAlign_Left
 	);
 	sprintf(timer.timer_display, ":");
@@ -140,7 +140,7 @@ void StageTimer_Draw()
 		timer.timer_display,
 
 		-1 + stage.noteshakex,
-		-109 + stage.noteshakey,
+		(stage.prefs.downscroll) ? 100 + stage.noteshakey : -109 + stage.noteshakey,
 		FontAlign_Left
 	);
 	if (timer.timersec >= 10)
@@ -151,7 +151,7 @@ void StageTimer_Draw()
 	stage.font_cdr.draw(&stage.font_cdr,
 		timer.timer_display,
 		-1 + 7 + stage.noteshakex,
-		-109 + stage.noteshakey,
+		(stage.prefs.downscroll) ? 100 + stage.noteshakey : -109 + stage.noteshakey,
 		FontAlign_Left
 	);
 	if (stage.prefs.downscroll)
