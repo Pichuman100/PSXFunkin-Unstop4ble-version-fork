@@ -2063,7 +2063,7 @@ void Stage_Tick(void)
 					stage.font_cdr.draw(&stage.font_cdr,
 						this->score_text,
 						(stage.mode == StageMode_2P && i == 0) ? 10 : -150,
-						(stage.prefs.downscroll) ? -(screen.SCREEN_HEIGHT2 - 13) : (screen.SCREEN_HEIGHT2 - 22),
+						(stage.prefs.downscroll) ? -(screen.SCREEN_HEIGHT2 - 12) : (screen.SCREEN_HEIGHT2 - 21),
 						FontAlign_Left 
 					);
 				}
@@ -2088,7 +2088,7 @@ void Stage_Tick(void)
 					stage.font_cdr.draw(&stage.font_cdr,
 						this->miss_text,
 						(stage.mode == StageMode_2P && i == 0) ? 100 : -60, 
-						(stage.prefs.downscroll) ? -(screen.SCREEN_HEIGHT2 - 13) : (screen.SCREEN_HEIGHT2 - 22),
+						(stage.prefs.downscroll) ? -(screen.SCREEN_HEIGHT2 - 12) : (screen.SCREEN_HEIGHT2 - 21),
 						FontAlign_Left
 					);
 				}
@@ -2125,7 +2125,7 @@ void Stage_Tick(void)
 					stage.font_cdr.draw(&stage.font_cdr,
 						this->accuracy_text,
 						(stage.mode == StageMode_2P && i == 0) ? 50 : (stage.mode == StageMode_2P && i == 1) ? -110 : 39, 
-						(stage.prefs.downscroll) ? -(screen.SCREEN_HEIGHT2 - 13) : (screen.SCREEN_HEIGHT2 - 22),
+						(stage.prefs.downscroll) ? -(screen.SCREEN_HEIGHT2 - 12) : (screen.SCREEN_HEIGHT2 - 21),
 						FontAlign_Left
 					);
 				}
