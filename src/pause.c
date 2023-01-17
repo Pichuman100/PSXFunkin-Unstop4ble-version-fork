@@ -7,9 +7,6 @@
 #include "stage.h"
 #include "trans.h"
 #include "audio.h"
-
-static u8 pause_select = 0;
-
 void PausedState()
 {
 	static const char *stage_options[] = {
@@ -21,7 +18,7 @@ void PausedState()
 	//Select option if cross or start is pressed
 	if (pad_state.press & (PAD_CROSS | PAD_START))
 	{
-		switch (pause_select)
+		switch (stage.pause_select)
 		{
 			case 0: //Resume
 				Audio_ResumeXA();
@@ -30,12 +27,10 @@ void PausedState()
 			case 1: //Retry
 				stage.trans = StageTrans_Reload;
 				Trans_Start();
-				pause_select = 0;
 				break;
 			case 2: //Quit
 				stage.trans = StageTrans_Menu;
 				Trans_Start();
-				pause_select = 0;
 				break;
 		}
 	}
@@ -43,24 +38,24 @@ void PausedState()
 	//Change option
 	if (pad_state.press & PAD_UP)
 	{
-		if (pause_select > 0)
-			pause_select--;
+		if (stage.pause_select > 0)
+			stage.pause_select--;
 		else
-			pause_select = COUNT_OF(stage_options) - 1;
+			stage.pause_select = COUNT_OF(stage_options) - 1;
 	}
 	if (pad_state.press & PAD_DOWN)
 	{
-		if (pause_select < COUNT_OF(stage_options) - 1)
-			pause_select++;
+		if (stage.pause_select < COUNT_OF(stage_options) - 1)
+			stage.pause_select++;
 		else
-			pause_select = 0;
+			stage.pause_select = 0;
 	}
 
 	//draw options
 	if (stage.pause_scroll == -1)
 		stage.pause_scroll = COUNT_OF(stage_options) * FIXED_DEC(33,1);
 
-	s32 next_scroll = pause_select * FIXED_DEC(33,1);
+	s32 next_scroll = stage.pause_select * FIXED_DEC(33,1);
 	stage.pause_scroll += (next_scroll - stage.pause_scroll) >> 3;
 
 	for (u8 i = 0; i < COUNT_OF(stage_options); i++)
@@ -75,13 +70,13 @@ void PausedState()
 		//draw text
 		stage.font_bold.draw_col(&stage.font_bold,
 		stage_options[i],
-	  20 + (y >> 2),
+		20 + (y >> 2),
 		y + 120,
 		FontAlign_Left,
 		//if the option is the one you are selecting, draw in normal color, else, draw gray
-		(i == pause_select) ? 128 : 100,
-		(i == pause_select) ? 128 : 100,
-		(i == pause_select) ? 128 : 100
+		(i == stage.pause_select) ? 128 : 100,
+		(i == stage.pause_select) ? 128 : 100,
+		(i == stage.pause_select) ? 128 : 100
 		);
 	}
 	//pog blend
@@ -105,10 +100,10 @@ void OptionsState(fixed_t * note_x[8])
 	//Select option if cross or start is pressed
 	if (pad_state.press & (PAD_CROSS | PAD_START))
 	{
-		if (stage_options[pause_select] != "") //todo remove this shit
+		if (*stage_options[stage.pause_select] != '\0')
 			stage.pause_scroll = -1;
 
-		switch (pause_select)
+		switch (stage.pause_select)
 		{
 			case 0: //Back
 				stage.pause_state = 0;
@@ -167,24 +162,24 @@ void OptionsState(fixed_t * note_x[8])
 	//Change option
 	if (pad_state.press & PAD_UP)
 	{
-		if (pause_select > 0)
-			pause_select--;
+		if (stage.pause_select > 0)
+			stage.pause_select--;
 		else
-			pause_select = COUNT_OF(stage_options) - 1;
+			stage.pause_select = COUNT_OF(stage_options) - 1;
 	}
 	if (pad_state.press & PAD_DOWN)
 	{
-		if (pause_select < COUNT_OF(stage_options) - 1)
-			pause_select++;
+		if (stage.pause_select < COUNT_OF(stage_options) - 1)
+			stage.pause_select++;
 		else
-			pause_select = 0;
+			stage.pause_select = 0;
 	}
 
 	//draw options
 	if (stage.pause_scroll == -1)
 		stage.pause_scroll = COUNT_OF(stage_options) * FIXED_DEC(33,1);
 
-	s32 next_scroll = pause_select * FIXED_DEC(33,1);
+	s32 next_scroll = stage.pause_select * FIXED_DEC(33,1);
 	stage.pause_scroll += (next_scroll - stage.pause_scroll) >> 3;
 	
 	for (u8 i = 0; i < COUNT_OF(stage_options); i++)
@@ -203,9 +198,9 @@ void OptionsState(fixed_t * note_x[8])
 		y + 120,
 		FontAlign_Left,
 		//if the option is the one you are selecting, draw in normal color, else, draw gray
-		(i == pause_select) ? 128 : 100,
-		(i == pause_select) ? 128 : 100,
-		(i == pause_select) ? 128 : 100
+		(i == stage.pause_select) ? 128 : 100,
+		(i == stage.pause_select) ? 128 : 100,
+		(i == stage.pause_select) ? 128 : 100
 		);
 	}
 	

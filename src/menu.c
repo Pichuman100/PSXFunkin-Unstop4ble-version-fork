@@ -639,16 +639,16 @@ void Menu_Tick(void)
 				const char *week;
 				StageId stage;
 				const char *name;
-				const char *tracks[3];
+				const char *tracks[4];
 				int length;
 			} menu_options[] = {
 				{NULL, StageId_1_4, "TUTORIAL", {"TUTORIAL", NULL, NULL}, 1},
-				{"1", StageId_1_1, "DADDY DEAREST", {"BOPEEBO", "FRESH", "DADBATTLE"}, 3},
-				{"2", StageId_2_1, "SPOOKY MONTH", {"SPOOKEEZ", "SOUTH", "MONSTER"}, 3},
-				{"3", StageId_3_1, "PICO", {"PICO", "PHILLY NICE", "BLAMMED"}, 3},
-				{"4", StageId_4_1, "MOMMY MUST MURDER", {"SATIN PANTIES", "HIGH", "MILF"}, 3},
-				{"5", StageId_5_1, "RED SNOW", {"COCOA", "EGGNOG", "WINTER HORRORLAND"}, 3},
-				{"6", StageId_6_1, "HATING SIMULATOR", {"SENPAI", "ROSES", "THORNS"}, 3},
+				{"1", StageId_1_1, "DADDY DEAREST", {"BOPEEBO", "FRESH", "DADBATTLE", NULL}, 3},
+				{"2", StageId_2_1, "SPOOKY MONTH", {"SPOOKEEZ", "SOUTH", "MONSTER", NULL}, 3},
+				{"3", StageId_3_1, "PICO", {"PICO", "PHILLY NICE", "BLAMMED", NULL}, 3},
+				{"4", StageId_4_1, "MOMMY MUST MURDER", {"SATIN PANTIES", "HIGH", "MILF", NULL}, 3},
+				{"5", StageId_5_1, "RED SNOW", {"COCOA", "EGGNOG", "WINTER HORRORLAND", NULL}, 3},
+				{"6", StageId_6_1, "HATING SIMULATOR", {"SENPAI", "ROSES", "THORNS", NULL}, 3},
 			};
 	
 			//Draw week name and tracks

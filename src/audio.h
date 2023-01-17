@@ -91,6 +91,7 @@ u32 Audio_LoadVAGData(u32 *sound, u32 sound_size);
 void AudioPlayVAG(int channel, u32 addr);
 void Audio_PlaySoundOnChannel(u32 addr, u32 channel, int volume);
 void Audio_PlaySound(u32 addr, int volume);
+u32 VAG_IsPlaying(u32 channel);
 void Audio_ClearAlloc(void);
 
 #endif

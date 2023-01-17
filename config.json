@@ -1,0 +1,48 @@
+{
+	"animations": [
+		{
+			"fnfanim" : "idle",
+			"imgname" : "idle",
+			"hname"   : "Idle"
+		},
+		{
+			"fnfanim" : "singLEFT",
+			"imgname" : "left",
+			"hname"   : "Left"
+		},
+		{
+			"fnfanim" : "singDOWN",
+			"imgname" : "down",
+			"hname"   : "Down"
+		},
+		{
+			"fnfanim" : "singUP",
+			"imgname" : "up",
+			"hname"   : "Up"
+		},
+		{
+			"fnfanim" : "singRIGHT",
+			"imgname" : "right",
+			"hname"   : "Right"
+		}
+	],
+	"input":  "iso/chars/ee/idk",
+	"outdir": "iso/chars/ee/",
+	"charname" : "ee",
+	"optimize" : false,
+	"optimizename" : "ee",
+	"arcname" : "ArcMain",
+	"vrampos" : [
+		768, 
+		0, 
+		0, 
+		481
+	],
+
+	"bpp" : 4,
+	"resize" : 0.25,
+	"xmlscale" : 1.0,
+	"padding" : 1,
+	"max_width" : 256,
+	"max_height" : 256
+}

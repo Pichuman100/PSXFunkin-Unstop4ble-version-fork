@@ -11,13 +11,13 @@ all: \
 	iso/stage/hud1-5.tim \
 	iso/stage/hud1-6.tim \
 	iso/stage/count.tim \
-	iso/bf/main.arc \
-	iso/bf/dead.tim \
-	iso/dad/main.arc \
-	iso/gf/main.arc \
-	iso/gf/tut.arc \
-	iso/gf/speaker.tim \
-	iso/week1/back.arc \
+	iso/chars/bf/main.arc \
+	iso/chars/bf/dead.tim \
+	iso/chars/dad/main.arc \
+	iso/chars/gf/main.arc \
+	iso/chars/gf/tut.arc \
+	iso/chars/gf/speaker.tim \
+	iso/stages/week1/back.arc \
 
 iso/%.tim: iso/%.png
 	tools/funkintimconv/funkintimconv $@ $<
@@ -29,14 +29,14 @@ iso/%.arc:
 iso/menu/menu.arc: iso/menu/back.tim iso/menu/ng.tim iso/menu/story.tim iso/menu/title.tim
 
 # BF
-iso/bf/main.arc: iso/bf/bf0.tim iso/bf/bf1.tim iso/bf/bf2.tim iso/bf/bf3.tim iso/bf/bf4.tim iso/bf/bf5.tim iso/bf/bf6.tim
+iso/chars/bf/main.arc: iso/chars/bf/bf0.tim iso/chars/bf/bf1.tim iso/chars/bf/bf2.tim iso/chars/bf/bf3.tim iso/chars/bf/bf4.tim iso/chars/bf/bf5.tim iso/chars/bf/bf6.tim
 
 # Dad
-iso/dad/main.arc: iso/dad/idle0.tim iso/dad/idle1.tim iso/dad/left.tim iso/dad/down.tim iso/dad/up.tim iso/dad/right.tim
+iso/chars/dad/main.arc: iso/chars/dad/idle0.tim iso/chars/dad/idle1.tim iso/chars/dad/left.tim iso/chars/dad/down.tim iso/chars/dad/up.tim iso/chars/dad/right.tim
 
 # GF
-iso/gf/main.arc: iso/gf/gf0.tim iso/gf/gf1.tim iso/gf/gf2.tim
-iso/gf/tut.arc: iso/gf/tut0.tim iso/gf/tut1.tim
+iso/chars/gf/main.arc: iso/chars/gf/gf0.tim iso/chars/gf/gf1.tim iso/chars/gf/gf2.tim
+iso/chars/gf/tut.arc: iso/chars/gf/tut0.tim iso/chars/gf/tut1.tim
 
 # Week 1
-iso/week1/back.arc: iso/week1/back0.tim iso/week1/back1.tim
+iso/stages/week1/back.arc: iso/stages/week1/back0.tim iso/stages/week1/back1.tim

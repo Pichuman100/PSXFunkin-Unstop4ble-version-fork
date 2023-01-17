@@ -440,3 +440,7 @@ void Audio_PlaySound(u32 addr, int volume) {
    // printf("Could not find free channel to play sound (addr=%08x)\n", addr);
 }
 
+u32 VAG_IsPlaying(u32 channel)
+{
+	return (SPU_CHANNELS[channel]._reserved != 0);
+}

@@ -192,16 +192,18 @@ typedef struct
 	//Stage settings
 	int pal_i, wide_i;
 	int pause_state;
-	fixed_t pause_scroll;
 	struct
 	{
 		boolean ghost, downscroll, middlescroll, expsync, practice, debug, palmode, widescreen, sfxmiss, songtimer, botplay, flash;
 		int savescore[StageId_Max][3];
 	} prefs;
-	boolean paused;
 	s32 mode;
 	
 	u32 offset;
+	
+	fixed_t pause_scroll;
+	u8 pause_select;
+	boolean paused;
 	
 	//HUD textures
 	Gfx_Tex tex_hud0, tex_hud1, tex_count;

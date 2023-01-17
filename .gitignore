@@ -34,13 +34,19 @@ build/
 
 # Exclude converted assets
 iso/*/*.tim
+iso/*/*/*.tim
 iso/*/*.arc
+iso/*/*/*.arc
 iso/*/*.xa
 iso/*/*/*.xa
 iso/*/*.cht
+iso/*/*/*.cht
 
 # Big Chungus
 .DS_Store
 
 tools/funkinchrpak/funkinchrpak
 tools/funkinmultitool/funkinmultitool
+
+# Don't remove this
+!main.exe

@@ -1727,8 +1727,10 @@ void Stage_Tick(void)
 
 	if (Trans_Tick())
 	{
+		stage.pause_select = 0;
 		stage.paused = false;
-        switch (stage.trans)
+	
+	switch (stage.trans)
 		{
 			case StageTrans_Menu:
 				CheckNewScore();
