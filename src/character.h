@@ -25,6 +25,7 @@ typedef enum
 	CharAnim_Down,  CharAnim_DownAlt,
 	CharAnim_Up,    CharAnim_UpAlt,
 	CharAnim_Right, CharAnim_RightAlt,
+	CharAnim_Special1, CharAnim_Special2, CharAnim_Special3,
 	
 	CharAnim_Max //Max standard/shared animation
 } CharAnim;
@@ -53,7 +54,7 @@ typedef struct Character
 	u32 health_bar; //hud1.tim
 	fixed_t focus_x, focus_y, focus_zoom;
 	
-	fixed_t size, idle2;
+	fixed_t size;
 	
 	//Animation state
 	Animatable animatable;
