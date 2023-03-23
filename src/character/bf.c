@@ -94,6 +94,10 @@ static const Animation char_bf_anim[PlayerAnim_Max] = {
 	{2, (const u8[]){11, 12, ASCR_BACK, 1}},             //CharAnim_Right
 	{0, (const u8[]){ASCR_CHGANI, CharAnim_Idle}},       //CharAnim_RightAlt
 	
+	{0, (const u8[]){ASCR_CHGANI, CharAnim_Idle}},       //CharAnim_Special1
+	{0, (const u8[]){ASCR_CHGANI, CharAnim_Idle}},       //CharAnim_Special2
+	{0, (const u8[]){ASCR_CHGANI, CharAnim_Idle}},       //CharAnim_Special3
+
 	{1, (const u8[]){ 20, 20, 21, ASCR_BACK, 1}},     //PlayerAnim_LeftMiss
 	{1, (const u8[]){ 22, 22, 23, ASCR_BACK, 1}},     //PlayerAnim_DownMiss
 	{1, (const u8[]){ 24, 24, 25, ASCR_BACK, 1}},     //PlayerAnim_UpMiss
@@ -152,24 +156,6 @@ void Char_BF_Tick(Character *character)
 		     character->animatable.anim != PlayerAnim_RightMiss) &&
 			(stage.song_step & 0x7) == 0)
 			character->set_anim(character, CharAnim_Idle);
-			
-		if (character->idle2 == 1)
-		{
-			if (Animatable_Ended(&character->animatable) &&
-			(character->animatable.anim != CharAnim_Left &&
-		     character->animatable.anim != PlayerAnim_LeftMiss &&
-		     character->animatable.anim != CharAnim_Down &&
-		     character->animatable.anim != CharAnim_DownAlt &&
-		     character->animatable.anim != PlayerAnim_DownMiss &&
-		     character->animatable.anim != CharAnim_Up &&
-		     character->animatable.anim != CharAnim_UpAlt &&
-		     character->animatable.anim != PlayerAnim_UpMiss &&
-		     character->animatable.anim != CharAnim_Right &&
-		     character->animatable.anim != CharAnim_RightAlt &&
-		     character->animatable.anim != PlayerAnim_RightMiss) &&
-			(stage.song_step & 0x7) == 3)
-			character->set_anim(character, CharAnim_LeftAlt);
-		}
 	}
 	
 	//Animate and draw character
@@ -215,7 +201,6 @@ Character *Char_BF_New(fixed_t x, fixed_t y)
 	
 	//Set character information
 	this->character.spec = CHAR_SPEC_MISSANIM;
-	this->character.idle2 = 0;
 
 	//health bar color
 	this->character.health_bar = 0xFF29B5D6;
