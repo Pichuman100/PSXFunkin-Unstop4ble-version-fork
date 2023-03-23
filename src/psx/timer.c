@@ -125,22 +125,19 @@ void StageTimer_Tick()
 
 void StageTimer_Draw()
 {
-	RECT bar_fill = {252, 252, 1, 1};
-	RECT_FIXED bar_dst = {FIXED_DEC(-70,1), FIXED_DEC(-110,1), FIXED_DEC(140,1), FIXED_DEC(11,1)};
 	//Draw timer
 	sprintf(timer.timer_display, "%d", timer.timermin);
 	stage.font_cdr.draw(&stage.font_cdr,
 		timer.timer_display,
-		-1 - 10 + stage.noteshakex, 
-		(stage.prefs.downscroll) ? 100 + stage.noteshakey : -109 + stage.noteshakey,
+		-5 - 10 + stage.noteshakex, 
+		(stage.prefs.downscroll) ? 101 + stage.noteshakey : -109 + stage.noteshakey,
 		FontAlign_Left
 	);
 	sprintf(timer.timer_display, ":");
 	stage.font_cdr.draw(&stage.font_cdr,
 		timer.timer_display,
-
-		-1 + stage.noteshakex,
-		(stage.prefs.downscroll) ? 100 + stage.noteshakey : -109 + stage.noteshakey,
+		-5 + stage.noteshakex,
+		(stage.prefs.downscroll) ? 101 + stage.noteshakey : -109 + stage.noteshakey,
 		FontAlign_Left
 	);
 	if (timer.timersec >= 10)
@@ -150,12 +147,22 @@ void StageTimer_Draw()
 
 	stage.font_cdr.draw(&stage.font_cdr,
 		timer.timer_display,
-		-1 + 7 + stage.noteshakex,
-		(stage.prefs.downscroll) ? 100 + stage.noteshakey : -109 + stage.noteshakey,
+		-5 + 7 + stage.noteshakex,
+		(stage.prefs.downscroll) ? 101 + stage.noteshakey : -109 + stage.noteshakey,
 		FontAlign_Left
 	);
-	if (stage.prefs.downscroll)
-		bar_dst.y = FIXED_DEC(99,1); 
+	
+	RECT bar_back = { 0, 250, 100, 5};
+	RECT bar_fill = { 0, 250, (98 * (stage.song_time) / (Audio_GetLength(stage.stage_def->music_track) * 1000)), 5};
 
-	Stage_BlendTex(&stage.tex_hud0, &bar_fill, &bar_dst, stage.bump, 1);
+	RECT_FIXED bar_dst = {FIXED_DEC(-50,1), FIXED_DEC(-110,1), 0, FIXED_DEC(10,1)};
+	
+	if (stage.prefs.downscroll)
+		bar_dst.y = -bar_dst.y - bar_dst.h;
+	
+	bar_dst.w = bar_fill.w << FIXED_SHIFT;
+	if (stage.song_step >= 0)
+		Stage_DrawTex(&stage.tex_hud1, &bar_fill, &bar_dst, stage.bump);
+	bar_dst.w = bar_back.w << FIXED_SHIFT;
+	Stage_DrawTexCol(&stage.tex_hud1, &bar_back, &bar_dst, stage.bump, 0, 0, 0);
 }

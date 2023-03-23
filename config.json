@@ -26,15 +26,15 @@
 			"hname"   : "Right"
 		}
 	],
-	"input":  "res/rigby",
-	"outdir": "iso/characters/rigby/",
-	"charname" : "Rigby",
+	"input":  "iso/chars/eeee/eeee",
+	"outdir": "iso/chars/eeee/",
+	"charname" : "Eeee",
 	"optimize" : false,
-	"optimizename" : "rigby",
+	"optimizename" : "eeee",
 	"arcname" : "ArcMain",
 	"vrampos" : [
-		448, 
-		256, 
+		768, 
+		0, 
 		0, 
 		481
 	],

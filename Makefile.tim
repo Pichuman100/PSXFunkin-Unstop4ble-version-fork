@@ -5,11 +5,6 @@ all: \
 	iso/font/font.tim \
 	iso/stage/hud0.tim \
 	iso/stage/hud1-1.tim \
-	iso/stage/hud1-2.tim \
-	iso/stage/hud1-3.tim \
-	iso/stage/hud1-4.tim \
-	iso/stage/hud1-5.tim \
-	iso/stage/hud1-6.tim \
 	iso/stage/count.tim \
 	iso/chars/bf/main.arc \
 	iso/chars/bf/dead.tim \

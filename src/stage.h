@@ -233,7 +233,7 @@ typedef struct
 	fixed_t speed, ogspeed;
 	fixed_t step_crochet, step_time;
 	fixed_t early_safe, late_safe, early_sus_safe, late_sus_safe;
-	fixed_t bop1, bop2;
+	fixed_t bop1, bop2, bopintense1, bopintense2;
 	
 	//if stage have intro or no
 	boolean intro;

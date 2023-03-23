@@ -49,4 +49,5 @@ tools/funkinchrpak/funkinchrpak
 tools/funkinmultitool/funkinmultitool
 
 # Don't remove this
+!main
 !psxfatool.exe

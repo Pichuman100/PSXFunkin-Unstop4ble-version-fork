@@ -134,6 +134,16 @@ void Debug_StageDebug()
 					stage.player->x = FIXED_DEC(debug.debugx,1);
 					stage.player->y = FIXED_DEC(debug.debugy,1);
 					break;
+					case 4:
+					if (debug.switchcooldown == 0)
+					{
+						debug.debugx = stage.player2->x / 1024; 
+						debug.debugy = stage.player2->y / 1024; 
+					}
+					debug.switchcooldown ++;
+					stage.player2->x = FIXED_DEC(debug.debugx,1);
+					stage.player2->y = FIXED_DEC(debug.debugy,1);
+					break;
 				}
 				
 				switch(pad_state.held)

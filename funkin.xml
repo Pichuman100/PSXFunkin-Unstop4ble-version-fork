@@ -36,11 +36,6 @@
 			<dir name = "stage">
 				<file name = "hud0.tim" type = "data" source = "iso/stage/hud0.tim"/>
 				<file name = "hud1-1.tim" type = "data" source = "iso/stage/hud1-1.tim"/>
-				<file name = "hud1-2.tim" type = "data" source = "iso/stage/hud1-2.tim"/>
-				<file name = "hud1-3.tim" type = "data" source = "iso/stage/hud1-3.tim"/>
-				<file name = "hud1-4.tim" type = "data" source = "iso/stage/hud1-4.tim"/>
-				<file name = "hud1-5.tim" type = "data" source = "iso/stage/hud1-5.tim"/>
-				<file name = "hud1-6.tim" type = "data" source = "iso/stage/hud1-6.tim"/>
 				<file name = "count.tim" type = "data" source = "iso/stage/count.tim"/>
 			</dir>
 			

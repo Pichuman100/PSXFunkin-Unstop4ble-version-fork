@@ -99,11 +99,19 @@ int main(int argc, char *argv[])
 	
 	auto song_info = j["song"];
 	
-	double bpm = song_info["bpm"];
+	//Need do this if statement in bpm and speed for not get errors since event.json might don't contain these values
+	double bpm = 0;
+
+	if (song_info["bpm"] > 0)
+		bpm  = song_info["bpm"];
+	
 	double crochet = (60.0 / bpm) * 1000.0;
 	double step_crochet = crochet / 4;
 	
-	double speed = song_info["speed"];
+	double speed = 0;
+
+	if (song_info["speed"] > 0)
+		speed = song_info["speed"];
 	
 	std::cout << argv[1] << " speed: " << speed << " ini bpm: " << bpm << " step_crochet: " << step_crochet << std::endl;
 	

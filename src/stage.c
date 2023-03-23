@@ -131,16 +131,23 @@ static void Stage_ScrollCamera(void)
 		}
 		else
 		{
-			stage.camera.x = lerp(stage.camera.x, stage.camera.tx, FIXED_DEC(5,100));
-			stage.camera.y = lerp(stage.camera.y, stage.camera.ty, FIXED_DEC(5,100));
-			stage.camera.zoom = lerp(stage.camera.zoom, stage.camera.tz, FIXED_DEC(5,100));
-			
+			if (stage.cam_should_scroll == false)
+			{
+				stage.camera.x = stage.camera.tx;
+				stage.camera.y = stage.camera.ty;
+				stage.camera.zoom = stage.camera.tz;
+			}
+			else
+			{
+				stage.camera.x = lerp(stage.camera.x, stage.camera.tx, FIXED_DEC(5,100));
+				stage.camera.y = lerp(stage.camera.y, stage.camera.ty, FIXED_DEC(5,100));
+				stage.camera.zoom = lerp(stage.camera.zoom, stage.camera.tz, FIXED_DEC(5,100));
+			}
 		}
 	}
 		
 	//Update other camera stuff
 	stage.camera.bzoom = FIXED_MUL(stage.camera.zoom, stage.charbump);
-
 }
 
 //Stage section functions
@@ -557,7 +564,7 @@ void Stage_DrawTexRotate(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, f
 	s16 sin = MUtil_Sin(angle);
 	s16 cos = MUtil_Cos(angle);
 	int pw = dst->w / 2000;
-    int ph = dst->h / 2000;
+  int ph = dst->h / 2000;
 
 	//Get rotated points
 	POINT p0 = {-pw, -ph};
@@ -750,7 +757,7 @@ static void Stage_DrawHealth(s16 health, u8 i, s8 ox)
 	
 	//Get src and dst
 	fixed_t hx;
-	hx = (128 << FIXED_SHIFT) * (10000 - 10000) / 10000;
+	hx = (128 << FIXED_SHIFT) * (10000 - health) / 10000;
 	RECT src = {
 		i >= 6 ? ((i % 1) * 114 + dying) + 94 : ((i % 1) * 114 + dying),
 		i >= 6 ? 15 + ((i - 6) / 1) * 47 : 15 + (i / 1) * 47,
@@ -782,7 +789,6 @@ static void Stage_DrawHealth(s16 health, u8 i, s8 ox)
 			
 	if (show)
 		Stage_DrawTex(&stage.tex_hud1, &src, &dst, FIXED_MUL(stage.bump, stage.sbump));
-	}
 }
 
 static void Stage_DrawHealthBar(s16 x, s32 color)
@@ -1213,6 +1219,21 @@ static void Stage_LoadStage(void)
 	stage.back = stage.stage_def->back();
 }
 
+
+static void GetChart_Values(IO_Data* chart, Section** section, Note** note, Event** event)
+{
+	u8 *chart_byte = (u8*)(*chart);
+
+	u8* section_address = chart_byte + 8; //Get the section (skip the speed bytes (4 bytes) and section size (2 bytes))
+	u16 section_size = *((u16*)(chart_byte + 4)); //Get the section size (2 bytes)
+	u16 note_size = *((u16*)(chart_byte + 6)); //Get the note size (2 bytes)
+
+	//Directly use section, notes and events pointers
+	*section = (Section*)section_address;
+	*note = (Note*)(chart_byte + section_size);
+	*event = (Event*)(chart_byte + section_size + note_size);
+}
+
 static void Stage_LoadChart(void)
 {
 	//Load stage data
@@ -1221,22 +1242,32 @@ static void Stage_LoadChart(void)
 	//Use standard path convention
 	sprintf(chart_path, "\\WEEK%d\\%d.%d%c.CHT;1", stage.stage_def->week, stage.stage_def->week, stage.stage_def->week_song, "ENH"[stage.stage_diff]);
 	
-	
 	if (stage.chart_data != NULL)
 		Mem_Free(stage.chart_data);
 	stage.chart_data = IO_Read(chart_path);
-	u8 *chart_byte = (u8*)stage.chart_data;
-
-		//Directly use section and notes pointers
-		stage.sections = (Section*)(chart_byte + 8);
-		stage.notes = (Note*)(chart_byte + ((u16*)stage.chart_data)[2]);
-		
-		//sorry about that lol,but hey it get the correct address
-		stage.events = (Event*)(chart_byte + ((u16*)stage.chart_data)[2] + ((u16*)stage.chart_data)[3]);
-		
+	
+	//Normal chart
+	GetChart_Values(&stage.chart_data, &stage.sections, &stage.notes, &stage.events);
+	
 		for (Note *note = stage.notes; note->pos != 0xFFFF; note++)
 			stage.num_notes++;
-		
+	
+	sprintf(chart_path, "\\WEEK%d\\%d.%dEVNT.CHT;1", stage.stage_def->week, stage.stage_def->week, stage.stage_def->week_song);
+	
+	//Check if should use events.json
+	if (IO_Check(chart_path))
+	{
+		stage.event_chart_data = IO_Read(chart_path);
+		//Events.json chart
+		GetChart_Values(&stage.event_chart_data, &stage.event_sections, &stage.event_notes, &stage.event_events);
+	}
+	else
+	{
+		stage.event_chart_data = NULL;
+		stage.event_events = NULL;
+		stage.event_notes = NULL;
+		stage.event_sections = NULL;
+	}
 	
 	//Count max scores
 	stage.player_state[0].max_score = 0;
@@ -1259,6 +1290,10 @@ static void Stage_LoadChart(void)
 	stage.cur_note = stage.notes;
 	stage.cur_event = stage.events;
 	
+	stage.event_cur_section = stage.event_sections;
+	stage.event_cur_note = stage.event_notes;
+	stage.event_cur_event = stage.event_events;
+	
 	stage.speed = stage.ogspeed = *((fixed_t*)stage.chart_data); //Get the speed value (4 bytes)
 	
 	stage.step_crochet = 0;
@@ -1266,6 +1301,9 @@ static void Stage_LoadChart(void)
 	stage.step_base = 0;
 	stage.section_base = stage.cur_section;
 	Stage_ChangeBPM(stage.cur_section->flag & SECTION_FLAG_BPM_MASK, 0);
+	
+	//BPM for events.json
+	stage.event_step_crochet = ((stage.event_cur_section->flag & SECTION_FLAG_BPM_MASK) << FIXED_SHIFT) * 8 / 240; //15/12/24
 	
 	//Initialize events
 	Events_Load();
@@ -1304,9 +1342,7 @@ static void Stage_LoadSFX(void)
 	//death sound
 	if ((stage.stage_id == StageId_Temp) || (stage.stage_id != StageId_Temp))
 	{
-		char text[0x80];
-		sprintf(text, "\\SOUNDS\\DEATH.VAG;1");
-		IO_FindFile(&file, text);
+		IO_FindFile(&file, "\\SOUNDS\\DEATH.VAG;1");
 		u32 *data = IO_ReadFile(&file);
 		Sounds[8] = Audio_LoadVAGData(data, file.size);
 		Mem_Free(data);
@@ -1315,9 +1351,7 @@ static void Stage_LoadSFX(void)
 	//retry sound
 	if ((stage.stage_id == StageId_Temp) || (stage.stage_id != StageId_Temp))
 	{
-		char text[0x80];
-		sprintf(text, "\\SOUNDS\\RETRY.VAG;1");
-		IO_FindFile(&file, text);
+		IO_FindFile(&file, "\\SOUNDS\\RETRY.VAG;1");
 		u32 *data = IO_ReadFile(&file);
 		Sounds[9] = Audio_LoadVAGData(data, file.size);
 		Mem_Free(data);
@@ -1344,12 +1378,12 @@ static void Stage_LoadMusic(void)
 	if (stage.stage_id == StageId_Temp) //PLACEHOLDER
 	{
 		stage.intro = true;
-		stage.note_scroll = FIXED_DEC(-5 * 6 * 12,1);
+		stage.event_note_scroll = stage.note_scroll = FIXED_DEC(-5 * 6 * 12,1);
 	}
 	else
 	{
 		stage.intro = true;
-		stage.note_scroll = FIXED_DEC(-5 * 6 * 12,1);
+		stage.event_note_scroll = stage.note_scroll = FIXED_DEC(-5 * 6 * 12,1);
 	}
 	stage.song_time = FIXED_DIV(stage.note_scroll, stage.step_crochet);
 	stage.interp_time = 0;
@@ -1419,11 +1453,21 @@ static void Stage_LoadState(void)
 		firsthit = false;
 		stage.bop1 = 0xF;
 		stage.bop2 = 0;
+		stage.bopintense1 = FIXED_DEC(30,1000);
+		stage.bopintense2 = FIXED_DEC(15,1000);
+		stage.bump = FIXED_UNIT;
+		stage.charbump = FIXED_UNIT;
 		strcpy(stage.player_state[i].accuracy_text, "Accuracy: ?");
 		strcpy(stage.player_state[i].miss_text, "Misses: 0");
 		strcpy(stage.player_state[i].score_text, "Score: 0");
 		
 		stage.player_state[i].pad_held = stage.player_state[i].pad_press = 0;
+		
+		//Check which stage should not have the camera sroll
+		if (stage.stage_id != StageId_Temp)
+			stage.cam_should_scroll = true;
+		else
+			stage.cam_should_scroll = false;
 	}
 	
 	//BF
@@ -1464,7 +1508,7 @@ static void Stage_LoadState(void)
 		note_x[6] = FIXED_DEC(-60,1) - FIXED_DEC(screen.SCREEN_WIDEADD,4);
 		note_x[7] = FIXED_DEC(-26,1) - FIXED_DEC(screen.SCREEN_WIDEADD,4);
 	}
-
+	
 	ObjectList_Free(&stage.objlist_splash);
 	ObjectList_Free(&stage.objlist_fg);
 	ObjectList_Free(&stage.objlist_bg);
@@ -1483,8 +1527,10 @@ void Stage_Load(StageId id, StageDiff difficulty, boolean story)
 	//Load HUD textures
 	Gfx_LoadTex(&stage.tex_hud0, IO_Read("\\STAGE\\HUD0.TIM;1"), GFX_LOADTEX_FREE);
 	
-	sprintf(iconpath, "\\STAGE\\HUD1-%d.TIM;1", stage.stage_def->week);
-	Gfx_LoadTex(&stage.tex_hud1, IO_Read(iconpath), GFX_LOADTEX_FREE);
+	if (stage.stage_id != StageId_Temp)
+		Gfx_LoadTex(&stage.tex_hud1, IO_Read("\\STAGE\\HUD1-1.TIM;1"), GFX_LOADTEX_FREE);
+	else
+		Gfx_LoadTex(&stage.tex_hud1, IO_Read("\\STAGE\\HUD1-1.TIM;1"), GFX_LOADTEX_FREE);
 	Gfx_LoadTex(&stage.tex_count, IO_Read("\\STAGE\\COUNT.TIM;1"), GFX_LOADTEX_FREE);
 	
 	//Load death screen texture
@@ -1532,6 +1578,7 @@ void Stage_Load(StageId id, StageDiff difficulty, boolean story)
 	
 	//Load music
 	stage.note_scroll = 0;
+	stage.event_note_scroll = 0;
 	Stage_LoadMusic();
 	
 	//Test offset
@@ -1552,6 +1599,11 @@ void Stage_Unload(void)
 	//Unload stage data
 	Mem_Free(stage.chart_data);
 	stage.chart_data = NULL;
+	
+	if (stage.event_chart_data != NULL)
+		Mem_Free(stage.event_chart_data);
+
+	stage.event_chart_data = NULL;
 	
 	//Free objects
 	ObjectList_Free(&stage.objlist_splash);
@@ -1839,6 +1891,7 @@ void Stage_Tick(void)
 			//Get song position
 			boolean playing;
 			fixed_t next_scroll;
+			fixed_t event_next_scroll;
 			
 			const fixed_t interp_int = FIXED_UNIT * 8 / 75;
 			
@@ -1873,6 +1926,7 @@ void Stage_Tick(void)
 					
 					//Update scroll
 					next_scroll = FIXED_MUL(stage.song_time, stage.step_crochet);
+					event_next_scroll = FIXED_MUL(stage.song_time, stage.event_step_crochet);
 				}
 				else if (Audio_PlayingXA())
 				{
@@ -1922,6 +1976,7 @@ void Stage_Tick(void)
 					
 					//Update scroll
 					next_scroll = ((fixed_t)stage.step_base << FIXED_SHIFT) + FIXED_MUL(stage.song_time - stage.time_base, stage.step_crochet);
+					event_next_scroll = FIXED_MUL(stage.song_time, stage.event_step_crochet);
 				}
 				else
 				{
@@ -1931,6 +1986,7 @@ void Stage_Tick(void)
 						
 					//Update scroll
 					next_scroll = ((fixed_t)stage.step_base << FIXED_SHIFT) + FIXED_MUL(stage.song_time - stage.time_base, stage.step_crochet);
+					event_next_scroll = FIXED_MUL(stage.song_time, stage.event_step_crochet);
 					
 					//Transition to menu or next song
 					if (stage.story && stage.stage_def->next_stage != stage.stage_id)
@@ -1957,6 +2013,9 @@ void Stage_Tick(void)
 						stage.song_step -= 11;
 					stage.song_step /= 12;
 				}
+				
+				if (event_next_scroll > stage.event_note_scroll)
+					stage.event_note_scroll = event_next_scroll;
 				
 				//Update section
 				if (stage.note_scroll >= 0)
@@ -2315,6 +2374,11 @@ void Stage_Tick(void)
 			//Unload stage data
 			Mem_Free(stage.chart_data);
 			stage.chart_data = NULL;
+			
+			if (stage.event_chart_data != NULL)
+				Mem_Free(stage.event_chart_data);
+
+			stage.event_chart_data = NULL;
 			
 			//Free background
 			stage.back->free(stage.back);

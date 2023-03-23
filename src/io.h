@@ -18,6 +18,7 @@ typedef u32* IO_Data;
 void IO_Init(void);
 void IO_Quit(void);
 void IO_FindFile(CdlFILE *file, const char *path);
+boolean IO_Check(const char* path);
 void IO_SeekFile(CdlFILE *file);
 IO_Data IO_ReadFile(CdlFILE *file);
 IO_Data IO_AsyncReadFile(CdlFILE *file);

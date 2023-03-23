@@ -26,8 +26,8 @@ typedef struct
   //psych engine shit
   u16 pos; //1/12 steps
   u16 event;
-  u16 value1;
-  u16 value2;
+  s16 value1;
+  s16 value2;
 }Event;
 
 typedef struct
