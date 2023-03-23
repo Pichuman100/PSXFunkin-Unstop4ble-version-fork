@@ -149,6 +149,8 @@ typedef struct
 #define NOTE_FLAG_MINE        (1 << 6) //Note is a mine
 #define NOTE_FLAG_HIT         (1 << 7) //Note has been hit
 
+#define NOTE_FLAG_PLAYED    (1 << 15) //Note that only used for check if note has been already played
+
 typedef struct
 {
 	u16 pos; //1/12 steps
@@ -223,6 +225,11 @@ typedef struct
 	size_t num_notes;
 	Event* events;
 	
+	IO_Data event_chart_data;
+	Section *event_sections;
+	Note *event_notes;
+	Event* event_events;
+	
 	fixed_t speed, ogspeed;
 	fixed_t step_crochet, step_time;
 	fixed_t early_safe, late_safe, early_sus_safe, late_sus_safe;
@@ -243,6 +250,7 @@ typedef struct
 		fixed_t bzoom;
 	} camera;
 	fixed_t bump, sbump, charbump;
+	boolean cam_should_scroll;
 	
 	StageBack *back;
 	
@@ -256,6 +264,13 @@ typedef struct
 	Note *cur_note; //First visible and hittable note, used for drawing and hit detection
 	Event* cur_event; //Current event
 	
+	// For event.json
+	Section *event_cur_section; //Current section
+	Note *event_cur_note; //First visible and hittable note, used for drawing and hit detection
+	Event* event_cur_event; //Current event
+	
+	fixed_t event_step_crochet;
+	fixed_t event_note_scroll;
 	fixed_t note_scroll, song_time, interp_time, interp_ms, interp_speed;
 	
 	u16 last_bpm;
@@ -310,10 +325,5 @@ void Stage_BlendTexArb(Gfx_Tex *tex, const RECT *src, const POINT_FIXED *p0, con
 void Stage_Load(StageId id, StageDiff difficulty, boolean story);
 void Stage_Unload();
 void Stage_Tick();
-
-#ifdef PSXF_NETWORK
-void Stage_NetHit(Packet *packet);
-void Stage_NetMiss(Packet *packet);
-#endif
 
 #endif
