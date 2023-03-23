@@ -12,11 +12,37 @@
 
 Events event_speed;
 
+static void Events_Check(Event* event)
+{
+	//Events
+	switch(event->event & EVENTS_FLAG_VARIANT)
+	{
+		case EVENTS_FLAG_SPEED: //Scroll Speed!!
+		{
+			event_speed.value1 = event->value1;
+			event_speed.value2 = event->value2;
+			break;
+		}
+		case EVENTS_FLAG_GF: //Set GF Speed!!
+		{
+			stage.gf_speed = (event->value1 >> FIXED_SHIFT) * 4;
+			break;
+		}
+		case EVENTS_FLAG_CAMZOOM: //Add Camera Zoom!!
+		{
+			stage.charbump += event->value1;
+			stage.bump += event->value2;
+			break;
+		}
+		default: //nothing lol
+		break;
+	}
+}
+
 void Events_Tick(void)
 {
 	//Scroll Speed!
 	stage.speed += (FIXED_MUL(stage.ogspeed, event_speed.value1) - stage.speed) / (((event_speed.value2 / 60) + 1));
-
 }
 
 void Events_StartEvents(void)
@@ -31,36 +57,31 @@ void Events_StartEvents(void)
 			stage.cur_event++;
 
 		if (event->event & EVENTS_FLAG_PLAYED)
-		continue;
+			continue;
 
-			//Events
-			switch(event->event & EVENTS_FLAG_VARIANT)
-			{
-				case EVENTS_FLAG_SPEED: //Scroll Speed!!
-				{
-					event_speed.value1 = event->value1;
-					event_speed.value2 = event->value2;
-					break;
-				}
-				case EVENTS_FLAG_GF: //Set GF Speed!!
-				{
-					//So easy LOL
-					stage.gf_speed = (event->value1 / FIXED_UNIT) * 4;
-					break;
-				}
-				case EVENTS_FLAG_CAMZOOM: //Add Camera Zoom!!
-				{
-					//So easy LOL
-					stage.charbump += event->value1;
-					stage.bump += event->value2;
-					break;
-				}
-				default: //nothing lol
-					break;
-			}
-
-				event->event |= EVENTS_FLAG_PLAYED;
+		Events_Check(event);
+		event->event |= EVENTS_FLAG_PLAYED;
 	}
+
+	//Same thing but for event.json
+	if (stage.event_chart_data != NULL)
+	{
+		for (Event *event = stage.event_cur_event; event->pos != 0xFFFF; event++)
+		{
+			//Update event pointer
+			if (event->pos > (stage.event_note_scroll >> FIXED_SHIFT))
+				break;
+			else
+				stage.event_cur_event++;
+
+			if (event->event & EVENTS_FLAG_PLAYED)
+				continue;
+
+			Events_Check(event);
+			event->event |= EVENTS_FLAG_PLAYED;
+		}
+	}
+
 	Events_Tick();
 }
 
