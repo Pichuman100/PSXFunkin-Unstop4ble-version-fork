@@ -45,6 +45,7 @@ static const u8 note_anims[4][3] = {
 //Stage definitions
 boolean noteshake;
 boolean show;
+boolean firsthit;
 fixed_t fade;
 fixed_t fade, fadespd;
 static u32 Sounds[10];
@@ -746,80 +747,41 @@ static void Stage_DrawHealth(s16 health, u8 i, s8 ox)
 	{
 		dying = (health <= 2000) * 46;
 	}
-
-	if (i <= 5)
-	{
-		//Get src and dst
-		fixed_t hx = (128 << FIXED_SHIFT) * (10000 - health) / 10000;
-		RECT src = {
-			(i % 1) * 114 + dying,
-			16 + (i / 1) * 46,
-			46,
-			46,
+	
+	//Get src and dst
+	fixed_t hx;
+	hx = (128 << FIXED_SHIFT) * (10000 - 10000) / 10000;
+	RECT src = {
+		i >= 6 ? ((i % 1) * 114 + dying) + 94 : ((i % 1) * 114 + dying),
+		i >= 6 ? 15 + ((i - 6) / 1) * 47 : 15 + (i / 1) * 47,
+		46,
+		46,
+	};
+	RECT_FIXED dst = {
+		hx + ox * FIXED_DEC(18,1) - FIXED_DEC(21,1),
+		FIXED_DEC(screen.SCREEN_HEIGHT2 - 34 + 4 - 23, 1),
+		src.w << FIXED_SHIFT,
+		src.h << FIXED_SHIFT
 		};
-		RECT_FIXED dst = {
-			hx + ox * FIXED_DEC(15,1) - FIXED_DEC(21,1),
-			FIXED_DEC(screen.SCREEN_HEIGHT2 - 32 + 4 - 23, 1),
-			src.w << FIXED_SHIFT,
-			src.h << FIXED_SHIFT
-			};
-		if (stage.prefs.downscroll)
-			dst.y = -dst.y - dst.h;
+	if (stage.prefs.downscroll)
+		dst.y = (-dst.y - dst.h) - FIXED_DEC(4,1);
+	dst.y += stage.noteshakey;
+	dst.x += stage.noteshakex;
 
-		dst.y += stage.noteshakey;
-		dst.x += stage.noteshakex;
-
-		//Draw health icon
-		if (stage.mode == StageMode_Swap)
-		{
-			dst.w = -dst.w;
-			dst.x += FIXED_DEC(46,1);
-		}
-		else
-		{
-			dst.w = dst.w;
-			dst.x = dst.x;
-		}
-		
-		if (show)
-			Stage_DrawTex(&stage.tex_hud1, &src, &dst, FIXED_MUL(stage.bump, stage.sbump));
+	//Draw health icon
+	if (stage.mode == StageMode_Swap)
+	{
+		dst.w = -dst.w;
+		dst.x += FIXED_DEC(46,1);
 	}
 	else
 	{
-		//Get src and dst
-		fixed_t hx = (128 << FIXED_SHIFT) * (10000 - health) / 10000;
-		RECT src = {
-			((i % 1) * 114 + dying) + 94,
-			16 + ((i - 6) / 1) * 46,
-			46,
-			46,
-		};
-		RECT_FIXED dst = {
-			hx + ox * FIXED_DEC(15,1) - FIXED_DEC(21,1),
-			FIXED_DEC(screen.SCREEN_HEIGHT2 - 32 + 4 - 23, 1),
-			src.w << FIXED_SHIFT,
-			src.h << FIXED_SHIFT
-			};
-		if (stage.prefs.downscroll)
-			dst.y = -dst.y - dst.h;
-
-		dst.y += stage.noteshakey;
-		dst.x += stage.noteshakex;
-
-		//Draw health icon
-		if (stage.mode == StageMode_Swap)
-		{
-			dst.w = -dst.w;
-			dst.x += FIXED_DEC(46,1);
-		}
-		else
-		{
-			dst.w = dst.w;
-			dst.x = dst.x;
-		}
+		dst.w = dst.w;
+		dst.x = dst.x;
+	}
 			
-		if (show)
-			Stage_DrawTex(&stage.tex_hud1, &src, &dst, FIXED_MUL(stage.bump, stage.sbump));
+	if (show)
+		Stage_DrawTex(&stage.tex_hud1, &src, &dst, FIXED_MUL(stage.bump, stage.sbump));
 	}
 }
 
@@ -1454,6 +1416,9 @@ static void Stage_LoadState(void)
 		timer.timermin = 0;
 		timer.timersec = 0;
 		stage.paused = false;
+		firsthit = false;
+		stage.bop1 = 0xF;
+		stage.bop2 = 0;
 		strcpy(stage.player_state[i].accuracy_text, "Accuracy: ?");
 		strcpy(stage.player_state[i].miss_text, "Misses: 0");
 		strcpy(stage.player_state[i].score_text, "Score: 0");
@@ -1853,16 +1818,19 @@ void Stage_Tick(void)
 						Stage_DrawTex(&stage.tex_hud0, &bot_src, &bot_dst, stage.bump);
 				}
 			}
-
-			if (noteshake) 
+			
+			if (stage.paused == false)
 			{
-				stage.noteshakex = RandomRange(FIXED_DEC(-5,1),FIXED_DEC(5,1));
-				stage.noteshakey = RandomRange(FIXED_DEC(-5,1),FIXED_DEC(5,1));
-			}
-			else
-			{
-				stage.noteshakex = 0;
-				stage.noteshakey = 0;
+				if (noteshake) 
+				{
+					stage.noteshakex = RandomRange(FIXED_DEC(-5,1),FIXED_DEC(5,1));
+					stage.noteshakey = RandomRange(FIXED_DEC(-5,1),FIXED_DEC(5,1));
+				}
+				else
+				{
+					stage.noteshakex = 0;
+					stage.noteshakey = 0;
+				}
 			}
 
 			//Clear per-frame flags
@@ -2013,25 +1981,30 @@ void Stage_Tick(void)
 			}
             
 			//Handle bump
-			if ((stage.bump = FIXED_UNIT + FIXED_MUL(stage.bump - FIXED_UNIT, FIXED_DEC(95,100))) <= FIXED_DEC(1003,1000))
-				stage.bump = FIXED_UNIT;
+			if (firsthit == true)
+			{
+				if ((stage.bump = FIXED_UNIT + FIXED_MUL(stage.bump - FIXED_UNIT, FIXED_DEC(95,100))) <= FIXED_DEC(1003,1000))
+					stage.bump = FIXED_UNIT;
+				if ((stage.charbump = FIXED_UNIT + FIXED_MUL(stage.charbump - FIXED_UNIT, FIXED_DEC(95,100))) <= FIXED_DEC(1003,1000))
+					stage.charbump = FIXED_UNIT;
+			}
 			stage.sbump = FIXED_UNIT + FIXED_MUL(stage.sbump - FIXED_UNIT, FIXED_DEC(60,100));
-			
-			if ((stage.charbump = FIXED_UNIT + FIXED_MUL(stage.charbump - FIXED_UNIT, FIXED_DEC(95,100))) <= FIXED_DEC(1003,1000))
-				stage.charbump = FIXED_UNIT;
 			
 			if (playing && (stage.flag & STAGE_FLAG_JUST_STEP))
 			{
-				boolean is_bump_step;
+				boolean is_bump_step = false;
 				
 				//Check if screen should bump
-				is_bump_step = (stage.song_step & 0xF) == 0;
+				if (firsthit == true)
+				{
+					is_bump_step = (stage.song_step & stage.bop1) == stage.bop2;
+				}
 				
 				//Bump screen
 				if (is_bump_step)
 				{
-					stage.bump = FIXED_DEC(103,100);
-					stage.charbump += FIXED_DEC(15,1000); //0.015
+					stage.bump += stage.bopintense1; //0.03
+					stage.charbump += stage.bopintense2; //0.015
 				}
 
 				//Bump health every 4 steps
@@ -2134,6 +2107,29 @@ void Stage_Tick(void)
 			}
 			
 			Events_StartEvents();
+			
+			if (playing)
+			{
+				for (Note* note = stage.cur_note;;note++)
+				{
+					if (note->pos > (stage.note_scroll >> FIXED_SHIFT))
+							break;
+
+					if (note->type & (NOTE_FLAG_SUSTAIN | NOTE_FLAG_PLAYED))
+						continue;
+
+					//Only bump screen when opponent hit the note
+					if (note->type & NOTE_FLAG_OPPONENT && firsthit == false)
+						firsthit = true;
+
+				 	Note* previous_note = note - 1;
+				 	//Check if notes types are the same
+				 	if (((previous_note->type & NOTE_FLAG_OPPONENT) != 0 && (note->type & NOTE_FLAG_OPPONENT) == 0) || 
+				 		((note->type & NOTE_FLAG_OPPONENT) != 0 && (previous_note->type & NOTE_FLAG_OPPONENT) == 0))
+				 		continue;
+					note->type |= NOTE_FLAG_PLAYED;
+				}
+			}
 			
 			switch (stage.mode)
 			{
