@@ -156,24 +156,6 @@ void Char_BF_Tick(Character *character)
 		     character->animatable.anim != PlayerAnim_RightMiss) &&
 			(stage.song_step & 0x7) == 0)
 			character->set_anim(character, CharAnim_Idle);
-			
-		if (character->idle2 == 1)
-		{
-			if (Animatable_Ended(&character->animatable) &&
-			(character->animatable.anim != CharAnim_Left &&
-		     character->animatable.anim != PlayerAnim_LeftMiss &&
-		     character->animatable.anim != CharAnim_Down &&
-		     character->animatable.anim != CharAnim_DownAlt &&
-		     character->animatable.anim != PlayerAnim_DownMiss &&
-		     character->animatable.anim != CharAnim_Up &&
-		     character->animatable.anim != CharAnim_UpAlt &&
-		     character->animatable.anim != PlayerAnim_UpMiss &&
-		     character->animatable.anim != CharAnim_Right &&
-		     character->animatable.anim != CharAnim_RightAlt &&
-		     character->animatable.anim != PlayerAnim_RightMiss) &&
-			(stage.song_step & 0x7) == 3)
-			character->set_anim(character, CharAnim_LeftAlt);
-		}
 	}
 	
 	//Animate and draw character
