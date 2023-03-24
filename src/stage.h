@@ -44,39 +44,17 @@
 //Stage enums
 typedef enum
 {
-	StageId_1_1, //Bopeebo
-	StageId_1_2, //Fresh
-	StageId_1_3, //Dadbattle
-	StageId_1_4, //Tutorial
+	StageId_Bopeebo, //Bopeebo
+	StageId_Fresh, //Fresh
+	StageId_Dadbattle, //Dadbattle
+	StageId_Tutorial, //Tutorial
 	
-	StageId_2_1, //Spookeez
-	StageId_2_2, //South
-	StageId_2_3, //Monster
-	
-	StageId_3_1, //Pico
-	StageId_3_2, //Philly
-	StageId_3_3, //Blammed
-	
-	StageId_4_1, //Satin Panties
-	StageId_4_2, //High
-	StageId_4_3, //MILF
-	
-	StageId_4_4, //Test
-	
-	StageId_5_1, //Cocoa
-	StageId_5_2, //Eggnog
-	StageId_5_3, //Winter Horrorland
-	
-	StageId_6_1, //Senpai
-	StageId_6_2, //Roses
-	StageId_6_3, //Thorns
-	
-	StageId_Temp, //Placeholder
+	StageId_Temp, //Placeholder song thing
 	
 	StageId_Max
 } StageId;
 
-#define StageId_LastVanilla StageId_6_3
+#define StageId_LastVanilla StageId_Temp
 
 typedef enum
 {
