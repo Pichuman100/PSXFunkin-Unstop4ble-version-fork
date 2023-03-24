@@ -31,42 +31,8 @@ static u32 Sounds[3];
 static char scoredisp[30];
 //Menu messages
 static const char *funny_messages[][2] = {
-	{"PSX PORT BY CUCKYDEV", "YOU KNOW IT"},
-	{"PORTED BY CUCKYDEV", "WHAT YOU GONNA DO"},
-	{"FUNKIN", "FOREVER"},
-	{"WHAT THE HELL", "RITZ PSX"},
-	{"LIKE PARAPPA", "BUT COOLER"},
-	{"THE JAPI", "EL JAPI"},
-	{"PICO FUNNY", "PICO FUNNY"},
-	{"OPENGL BACKEND", "BY CLOWNACY"},
-	{"CUCKYFNF", "SETTING STANDARDS"},
-	{"lool", "inverted colours"},
-	{"NEVER LOOK AT", "THE ISSUE TRACKER"},
-	{"PSXDEV", "HOMEBREW"},
-	{"ZERO POINT ZERO TWO TWO EIGHT", "ONE FIVE NINE ONE ZERO FIVE"},
-	{"DOPE ASS GAME", "PLAYSTATION MAGAZINE"},
-	{"NEWGROUNDS", "FOREVER"},
-	{"NO FPU", "NO PROBLEM"},
-	{"OK OKAY", "WATCH THIS"},
-	{"ITS MORE MALICIOUS", "THAN ANYTHING"},
-	{"USE A CONTROLLER", "LOL"},
-	{"SNIPING THE KICKSTARTER", "HAHA"},
-	{"SHITS UNOFFICIAL", "NOT A PROBLEM"},
-	{"SYSCLK", "RANDOM SEED"},
-	{"THEY DIDNT HIT THE GOAL", "STOP"},
-	{"FCEFUWEFUETWHCFUEZDSLVNSP", "PQRYQWENQWKBVZLZSLDNSVPBM"},
-	{"THE FLOORS ARE", "THREE DIMENSIONAL"},
-	{"PSXFUNKIN BY CUCKYDEV", "SUCK IT DOWN"},
-	{"PLAYING ON EPSXE HUH", "YOURE THE PROBLEM"},
-	{"NEXT IN LINE", "ATARI"},
-	{"HAXEFLIXEL", "COME ON"},
-	{"HAHAHA", "I DONT CARE"},
-	{"GET ME TO STOP", "TRY"},
-	{"FNF MUKBANG GIF", "THATS UNRULY"},
-	{"OPEN SOURCE", "FOREVER"},
-	{"ITS A PORT", "ITS WORSE"},
-	{"WOW GATO", "WOW GATO"},
-	{"BALLS FISH", "BALLS FISH"},
+	{"RANDOM MESSAGE", "I DONT KNOW"},
+	{"I LOVE", "BALLS"},
 };
 
 
@@ -642,13 +608,8 @@ void Menu_Tick(void)
 				const char *tracks[4];
 				int length;
 			} menu_options[] = {
-				{NULL, StageId_1_4, "TUTORIAL", {"TUTORIAL", NULL, NULL}, 1},
-				{"1", StageId_1_1, "DADDY DEAREST", {"BOPEEBO", "FRESH", "DADBATTLE", NULL}, 3},
-				{"2", StageId_2_1, "SPOOKY MONTH", {"SPOOKEEZ", "SOUTH", "MONSTER", NULL}, 3},
-				{"3", StageId_3_1, "PICO", {"PICO", "PHILLY NICE", "BLAMMED", NULL}, 3},
-				{"4", StageId_4_1, "MOMMY MUST MURDER", {"SATIN PANTIES", "HIGH", "MILF", NULL}, 3},
-				{"5", StageId_5_1, "RED SNOW", {"COCOA", "EGGNOG", "WINTER HORRORLAND", NULL}, 3},
-				{"6", StageId_6_1, "HATING SIMULATOR", {"SENPAI", "ROSES", "THORNS", NULL}, 3},
+				{NULL, StageId_Tutorial, "TUTORIAL", {"TUTORIAL", NULL, NULL}, 1},
+				{"1", StageId_Bopeebo, "DADDY DEAREST", {"BOPEEBO", "FRESH", "DADBATTLE", NULL}, 3},
 			};
 	
 			//Draw week name and tracks
@@ -789,26 +750,10 @@ void Menu_Tick(void)
 				u32 col;
 				const char *text;
 			} menu_options[] = {
-				//{StageId_4_4, 0xFFFC96D7, "TEST"},
-				{StageId_1_4, 0xFF9271FD, "TUTORIAL"},
-				{StageId_1_1, 0xFF9271FD, "BOPEEBO"},
-				{StageId_1_2, 0xFF9271FD, "FRESH"},
-				{StageId_1_3, 0xFF9271FD, "DADBATTLE"},
-				{StageId_2_1, 0xFF223344, "SPOOKEEZ"},
-				{StageId_2_2, 0xFF223344, "SOUTH"},
-				{StageId_2_3, 0xFF223344, "MONSTER"},
-				{StageId_3_1, 0xFF941653, "PICO"},
-				{StageId_3_2, 0xFF941653, "PHILLY NICE"},
-				{StageId_3_3, 0xFF941653, "BLAMMED"},
-				{StageId_4_1, 0xFFFC96D7, "SATIN PANTIES"},
-				{StageId_4_2, 0xFFFC96D7, "HIGH"},
-				{StageId_4_3, 0xFFFC96D7, "MILF"},
-				{StageId_5_1, 0xFFA0D1FF, "COCOA"},
-				{StageId_5_2, 0xFFA0D1FF, "EGGNOG"},
-				{StageId_5_3, 0xFFA0D1FF, "WINTER HORRORLAND"},
-				{StageId_6_1, 0xFFFF78BF, "SENPAI"},
-				{StageId_6_2, 0xFFFF78BF, "ROSES"},
-				{StageId_6_3, 0xFFFF78BF, "THORNS"},
+				{StageId_Tutorial, 0xFF9271FD, "TUTORIAL"},
+				{StageId_Bopeebo, 0xFF9271FD, "BOPEEBO"},
+				{StageId_Fresh, 0xFF9271FD, "FRESH"},
+				{StageId_Dadbattle, 0xFF9271FD, "DADBATTLE"},
 			};
 
 			menu.font_arial.draw(&menu.font_arial,
