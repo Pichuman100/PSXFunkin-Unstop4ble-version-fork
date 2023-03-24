@@ -32,7 +32,7 @@ static char scoredisp[30];
 //Menu messages
 static const char *funny_messages[][2] = {
 	{"RANDOM MESSAGE", "I DONT KNOW"},
-	{"I LOVE", "BALLS"},
+	{"I LOVE BALLS", "JK"},
 };
 
 
@@ -220,7 +220,7 @@ static void Menu_DrawWeek(const char *week, s32 x, s32 y)
 //Menu functions
 void Menu_Load(MenuPage page)
 {
-	stage.stage_id = StageId_1_1;
+	stage.stage_id = StageId_Temp;
 	//Load menu assets
 	IO_Data menu_arc = IO_Read("\\MENU\\MENU.ARC;1");
 	Gfx_LoadTex(&menu.tex_back,  Archive_Find(menu_arc, "back.tim"),  0);
