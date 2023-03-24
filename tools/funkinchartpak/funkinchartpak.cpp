@@ -79,6 +79,74 @@ void WriteLong(std::ostream &out, uint32_t word)
 	out.put(word >> 24);
 }
 
+bool isNumber(const std::string& string)
+{
+	for (char const &character : string) 
+	{
+    	if (std::isdigit(character) == false && character != '.')
+        	return false;
+	}
+	return true;
+}
+
+void Events_Read(json& i, Event& event_src, std::vector<Event>& event_target, uint8_t position)
+{
+	//Start with 0 for avoid bugs
+	event_src.event = 0;
+
+	if (i[0 + position] == "Change Scroll Speed")
+		event_src.event |= EVENTS_FLAG_SPEED;
+
+	if (i[0 + position] == "Set GF Speed")
+		event_src.event |= EVENTS_FLAG_GF;
+
+	if (i[0 + position] == "Add Camera Zoom")
+		event_src.event |= EVENTS_FLAG_CAMZOOM;
+
+	if (event_src.event & EVENTS_FLAG_VARIANT)
+	{
+		if (event_src.event & EVENTS_FLAG_SPEED)
+		{
+			//Default values
+			if (i[1 + position] == "")
+				i[1 + position] = "1";
+
+			if (i[2 + position] == "")
+				i[2 + position] = "0";
+		}
+
+		if (event_src.event & EVENTS_FLAG_GF)
+		{
+			//Default values
+			if (i[1 + position] == "")
+				i[1 + position] = "1";
+
+			if (i[2 + position] == "")
+				i[2 + position] = "0";
+		}
+		if (event_src.event & EVENTS_FLAG_CAMZOOM)
+		{
+			//Default values
+			if (i[1 + position] == "")
+				i[1 + position] = "0.015"; //cam zoom
+
+			if (i[2 + position] == "")
+				i[2 + position] = "0.03"; //hud zoom
+		}
+
+		//Get values information
+		std::string value1 =  i[1 + position];
+		std::string value2 =  i[2 + position];
+
+		//fixed values by 1024
+		event_src.value1 = std::stof(value1) * FIXED_UNIT;
+		event_src.value2 = std::stof(value2) * FIXED_UNIT;
+		std::cout << "Found event!: " << i[0 + position] << '\n';
+
+		event_target.push_back(event_src);
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	if (argc < 2)
@@ -153,11 +221,29 @@ int main(int argc, char *argv[])
 		//Read notes
 		for (auto &j : i["sectionNotes"])
 		{
+			//Push main event
+			Event new_event;
+
+			new_event.pos = (step_base * 12) + PosRound(((double)j[0] - milli_base) * 12.0, step_crochet);
+
+			//Sometimes the event are in the position where the sustain values should be
+			Events_Read(j, new_event, events, 2);
+			Events_Read(j, new_event, events, 3);
+			
 			//Push main note
 			Note new_note;
 
 			//invalid type
 			if (j[1] < 0)
+				continue;
+			
+			/* 
+			Check if the sustain actually are a number or a string that contain some Psych Engine event
+			Because old Psych Engine charts works in a really weird way
+			*/
+			std::string sustain_is_string = to_string(j[2]);
+
+			if (isNumber(sustain_is_string) == false)
 				continue;
 			
 			int sustain = (int)PosRound(j[2], step_crochet) - 1;
@@ -218,58 +304,8 @@ int main(int argc, char *argv[])
 			new_event.event = 0;
 
 			new_event.pos = (step_base * 12) + PosRound(((double)i[0] - milli_base) * 12.0, step_crochet);
-
-			if (j[0] == "Change Scroll Speed")
-				new_event.event |= EVENTS_FLAG_SPEED;
-
-			if (j[0] == "Set GF Speed")
-				new_event.event |= EVENTS_FLAG_GF;
-
-			if (j[0] == "Add Camera Zoom")
-				new_event.event |= EVENTS_FLAG_CAMZOOM;
-
-			if (new_event.event & EVENTS_FLAG_VARIANT)
-			{
-				if (new_event.event & EVENTS_FLAG_SPEED)
-				{
-					//Default values
-					if (j[1] == "")
-						j[1] = "1";
-
-					if (j[2] == "")
-						j[2] = "0";
-				}
-
-				if (new_event.event & EVENTS_FLAG_GF)
-				{
-					//Default values
-					if (j[1] == "")
-						j[1] = "1";
-
-					if (j[2] == "")
-						j[2] = "0";
-				}
-				if (new_event.event & EVENTS_FLAG_CAMZOOM)
-				{
-					//Default values
-					if (j[1] == "")
-						j[1] = "0.015"; //cam zoom
-
-					if (j[2] == "")
-						j[2] = "0.03"; //hud zoom
-				}
-
-				//Get values information
-				std::string value1 =  j[1];
-				std::string value2 =  j[2];
-
-				//fixed values by 1024
-				new_event.value1 = std::stof(value1) * FIXED_UNIT;
-				new_event.value2 = std::stof(value2) * FIXED_UNIT;
-				std::cout << "founded event!: " << j[0] << '\n';
-
-				events.push_back(new_event);
-			}
+			
+			Events_Read(j, new_event, events, 0);
 		}
 	}
 	
