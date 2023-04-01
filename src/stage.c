@@ -2040,7 +2040,7 @@ void Stage_Tick(void)
 			}
             
 			//Handle bump
-			if (firsthit == true)
+			if ((firsthit == true) && (stage.paused == false))
 			{
 				if ((stage.bump = FIXED_UNIT + FIXED_MUL(stage.bump - FIXED_UNIT, FIXED_DEC(95,100))) <= FIXED_DEC(1003,1000))
 					stage.bump = FIXED_UNIT;
@@ -2071,12 +2071,15 @@ void Stage_Tick(void)
 					stage.sbump = FIXED_DEC(103,100);
 			}
 			
-			//Scroll camera
-			if (stage.cur_section->flag & SECTION_FLAG_OPPFOCUS)
-				Stage_FocusCharacter(stage.opponent, FIXED_UNIT / 24);
-			else
-				Stage_FocusCharacter(stage.player, FIXED_UNIT / 24);
-			Stage_ScrollCamera();
+			if (stage.paused == false)
+			{
+				//Scroll camera
+				if (stage.cur_section->flag & SECTION_FLAG_OPPFOCUS)
+					Stage_FocusCharacter(stage.opponent, FIXED_UNIT / 24);
+				else
+					Stage_FocusCharacter(stage.player, FIXED_UNIT / 24);
+				Stage_ScrollCamera();
+			}
 			
 			//Draw Score
 			for (int i = 0; i < ((stage.mode >= StageMode_2P) ? 2 : 1); i++)
