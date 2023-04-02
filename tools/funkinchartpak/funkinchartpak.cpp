@@ -312,7 +312,12 @@ int main(int argc, char *argv[])
 	//Push dummy section and note
 	Section dum_section;
 	dum_section.end = 0xFFFF;
-	dum_section.flag = sections[sections.size() - 1].flag;
+	//This is for avoid segmentation fault
+	uint16_t sections_size = (sections.size() == 0) ? 0 : sections.size() - 1;
+	if (sections_size == 0)
+		dum_section.flag = 0;
+	else
+		dum_section.flag = sections[sections_size].flag;	
 	sections.push_back(dum_section);
 	
 	Note dum_note;
