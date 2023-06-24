@@ -89,7 +89,7 @@ void Character_CheckStartSing(Character *this)
 	     this->animatable.anim == PlayerAnim_DownMiss ||
 	     this->animatable.anim == PlayerAnim_UpMiss ||
 	     this->animatable.anim == PlayerAnim_RightMiss)))
-		this->sing_end = stage.note_scroll + (FIXED_DEC(12,1) << 2); //1 beat
+		this->sing_end = stage.chart.note_scroll + (FIXED_DEC(12,1) << 2); //1 beat
 }
 
 void Character_CheckEndSing(Character *this)
@@ -107,7 +107,7 @@ void Character_CheckEndSing(Character *this)
 	     this->animatable.anim == PlayerAnim_DownMiss ||
 	     this->animatable.anim == PlayerAnim_UpMiss ||
 	     this->animatable.anim == PlayerAnim_RightMiss))) &&
-	    stage.note_scroll >= this->sing_end)
+	    stage.chart.note_scroll >= this->sing_end)
 		this->set_anim(this, CharAnim_Idle);
 }
 

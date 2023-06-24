@@ -87,51 +87,26 @@ int main(int argc, char **argv)
 	//Game loop
 	while (PSX_Running())
 	{
-		if (stage.prefs.widescreen) {
-			if (stage.wide_i == 1)
-			{		
-				screen.SCREEN_WIDTH   = 512;
-				screen.SCREEN_HEIGHT  = 240;
-				screen.SCREEN_WIDTH2  = (screen.SCREEN_WIDTH >> 1);
-				screen.SCREEN_HEIGHT2 = (screen.SCREEN_HEIGHT >> 1);
+		if (stage.wide_i == 1)
+		{
+			screen.SCREEN_WIDTH   = 320;
+			screen.SCREEN_HEIGHT  = 240;
+			screen.SCREEN_WIDTH2  = (screen.SCREEN_WIDTH >> 1);
+			screen.SCREEN_HEIGHT2 = (screen.SCREEN_HEIGHT >> 1);
+			screen.SCREEN_WIDEADD = (screen.SCREEN_WIDTH - 320);
 
-				screen.SCREEN_WIDEADD = (screen.SCREEN_WIDTH - 512);
-				screen.SCREEN_TALLADD = (screen.SCREEN_HEIGHT - 240);
-				screen.SCREEN_WIDEADD2 = (screen.SCREEN_WIDEADD >> 1);
-				screen.SCREEN_TALLADD2 = (screen.SCREEN_TALLADD >> 1);
+			screen.SCREEN_TALLADD = (screen.SCREEN_HEIGHT - 240);
+			screen.SCREEN_WIDEADD2 = (screen.SCREEN_WIDEADD >> 1);
+			screen.SCREEN_TALLADD2 = (screen.SCREEN_TALLADD >> 1);
+			screen.SCREEN_WIDEOADD = (screen.SCREEN_WIDEADD > 0 ? screen.SCREEN_WIDEADD : 0);
 
-				screen.SCREEN_WIDEOADD = (screen.SCREEN_WIDEADD > 0 ? screen.SCREEN_WIDEADD : 0);
-				screen.SCREEN_TALLOADD = (screen.SCREEN_TALLADD > 0 ? screen.SCREEN_TALLADD : 0);
-				screen.SCREEN_WIDEOADD2 = (screen.SCREEN_WIDEOADD >> 1);
-				screen.SCREEN_TALLOADD2 = (screen.SCREEN_TALLOADD >> 1);	
+			screen.SCREEN_TALLOADD = (screen.SCREEN_TALLADD > 0 ? screen.SCREEN_TALLADD : 0);
+			screen.SCREEN_WIDEOADD2 = (screen.SCREEN_WIDEOADD >> 1);
+			screen.SCREEN_TALLOADD2 = (screen.SCREEN_TALLOADD >> 1);	
 
-				Gfx_Init();
-				stage.wide_i = 2;
-				stage.pal_i = 1; //check for pal mode again
-			}
-		}
-		else {
-			if (stage.wide_i == 1)
-			{
-				screen.SCREEN_WIDTH   = 320;
-				screen.SCREEN_HEIGHT  = 240;
-				screen.SCREEN_WIDTH2  = (screen.SCREEN_WIDTH >> 1);
-				screen.SCREEN_HEIGHT2 = (screen.SCREEN_HEIGHT >> 1);
-				screen.SCREEN_WIDEADD = (screen.SCREEN_WIDTH - 320);
-
-				screen.SCREEN_TALLADD = (screen.SCREEN_HEIGHT - 240);
-				screen.SCREEN_WIDEADD2 = (screen.SCREEN_WIDEADD >> 1);
-				screen.SCREEN_TALLADD2 = (screen.SCREEN_TALLADD >> 1);
-				screen.SCREEN_WIDEOADD = (screen.SCREEN_WIDEADD > 0 ? screen.SCREEN_WIDEADD : 0);
-
-				screen.SCREEN_TALLOADD = (screen.SCREEN_TALLADD > 0 ? screen.SCREEN_TALLADD : 0);
-				screen.SCREEN_WIDEOADD2 = (screen.SCREEN_WIDEOADD >> 1);
-				screen.SCREEN_TALLOADD2 = (screen.SCREEN_TALLOADD >> 1);	
-
-				Gfx_Init();
-				stage.wide_i = 2;
-				stage.pal_i = 1; //check for pal mode again
-			}
+			Gfx_Init();
+			stage.wide_i = 2;
+			stage.pal_i = 1; //check for pal mode again
 		}
 
 		//Prepare frame

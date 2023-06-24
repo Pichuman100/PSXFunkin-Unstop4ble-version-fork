@@ -137,6 +137,23 @@ typedef struct
 
 typedef struct
 {
+	IO_Data data;
+	Section *sections;
+	Note *notes;
+	Event* events;
+
+	Section *cur_section; //Current section
+	Note *cur_note; //First visible and hittable note, used for drawing and hit detection
+	Event* cur_event; //Current event
+
+	fixed_t step_crochet;
+	fixed_t note_scroll;
+
+	Section *section_base;
+} Chart;
+
+typedef struct
+{
 	Character *character;
 	Character *character2;
 	
@@ -185,6 +202,10 @@ typedef struct
 	u8 pause_select;
 	boolean paused;
 	
+	//Charts
+	Chart chart;
+	Chart event_chart;
+	
 	//HUD textures
 	Gfx_Tex tex_hud0, tex_hud1, tex_count;
 	Gfx_Tex tex_ded;
@@ -197,19 +218,8 @@ typedef struct
 	StageId stage_id;
 	StageDiff stage_diff;
 	
-	IO_Data chart_data;
-	Section *sections;
-	Note *notes;
-	size_t num_notes;
-	Event* events;
-	
-	IO_Data event_chart_data;
-	Section *event_sections;
-	Note *event_notes;
-	Event* event_events;
-	
 	fixed_t speed, ogspeed;
-	fixed_t step_crochet, step_time;
+	fixed_t step_time;
 	fixed_t early_safe, late_safe, early_sus_safe, late_sus_safe;
 	fixed_t bop1, bop2, bopintense1, bopintense2;
 	
@@ -238,24 +248,12 @@ typedef struct
 	Character *opponent2;
 	Character *gf;
 	
-	Section *cur_section; //Current section
-	Note *cur_note; //First visible and hittable note, used for drawing and hit detection
-	Event* cur_event; //Current event
-	
-	// For event.json
-	Section *event_cur_section; //Current section
-	Note *event_cur_note; //First visible and hittable note, used for drawing and hit detection
-	Event* event_cur_event; //Current event
-	
-	fixed_t event_step_crochet;
-	fixed_t event_note_scroll;
-	fixed_t note_scroll, song_time, interp_time, interp_ms, interp_speed;
+	fixed_t song_time, interp_time, interp_ms, interp_speed;
 	
 	u16 last_bpm;
 	
 	fixed_t time_base;
 	u16 step_base;
-	Section *section_base;
 	
 	s16 noteshakex;
 	s16 noteshakey;

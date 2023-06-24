@@ -116,7 +116,7 @@ void Char_GF_Tick(Character *character)
 	if (stage.flag & STAGE_FLAG_JUST_STEP)
 	{			
 		//Perform dance
-	    if (stage.note_scroll >= character->sing_end && (stage.song_step % stage.gf_speed) == 0)
+	    if (stage.chart.note_scroll >= character->sing_end && (stage.song_step % stage.gf_speed) == 0)
 		{
 			//Switch animation
 			if (character->animatable.anim == CharAnim_LeftAlt || character->animatable.anim == CharAnim_Right)
@@ -145,7 +145,7 @@ void Char_GF_SetAnim(Character *character, u8 anim)
 {
 	//Set animation
 	if (anim == CharAnim_Left || anim == CharAnim_Down || anim == CharAnim_Up || anim == CharAnim_Right || anim == CharAnim_UpAlt)
-		character->sing_end = stage.note_scroll + FIXED_DEC(22,1); //Nearly 2 steps
+		character->sing_end = stage.chart.note_scroll + FIXED_DEC(22,1); //Nearly 2 steps
 	Animatable_SetAnim(&character->animatable, anim);
 }
 

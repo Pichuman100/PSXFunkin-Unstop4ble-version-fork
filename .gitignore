@@ -49,6 +49,6 @@ tools/funkinchrpak/funkinchrpak
 tools/funkinmultitool/funkinmultitool
 
 # Don't remove this
-!main
+!main.exe
 !psxfatool.exe
 !chareditor.exe
