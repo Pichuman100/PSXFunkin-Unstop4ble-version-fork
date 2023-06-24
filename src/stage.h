@@ -66,8 +66,8 @@ typedef enum
 typedef enum
 {
 	StageMode_Normal,
-	StageMode_Swap,
 	StageMode_2P,
+	StageMode_Swap,
 	StageMode_Net1,
 	StageMode_Net2,
 } StageMode;
@@ -191,7 +191,7 @@ typedef struct
 	int pause_state;
 	struct
 	{
-		boolean ghost, downscroll, middlescroll, expsync, practice, debug, palmode, widescreen, sfxmiss, songtimer, botplay, flash;
+		boolean ghost, downscroll, middlescroll, expsync, practice, debug, palmode, widescreen, sfxmiss, songtimer, botplay, flash, combo;
 		int savescore[StageId_Max][3];
 	} prefs;
 	s32 mode;
@@ -221,6 +221,7 @@ typedef struct
 	fixed_t speed, ogspeed;
 	fixed_t step_time;
 	fixed_t early_safe, late_safe, early_sus_safe, late_sus_safe;
+	fixed_t flash, flashspd;
 	fixed_t bop1, bop2, bopintense1, bopintense2;
 	
 	//if stage have intro or no
@@ -288,14 +289,15 @@ extern Stage stage;
 
 //Stage drawing functions
 void Stage_DrawTexCol(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, u8 r, u8 g, u8 b);
+void Stage_DrawTexColFlipped(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, u8 r, u8 g, u8 b);
 void Stage_DrawTex(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom);
+void Stage_DrawTexFlipped(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom);
 void Stage_DrawTexRotate(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, u8 angle);
 void Stage_BlendTexRotate(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, u8 angle, u8 mode);
 void Stage_BlendTex(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, u8 mode);
 void Stage_BlendTexV2(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, u8 mode, u8 opacity);
 void Stage_DrawTexArb(Gfx_Tex *tex, const RECT *src, const POINT_FIXED *p0, const POINT_FIXED *p1, const POINT_FIXED *p2, const POINT_FIXED *p3, fixed_t zoom);
 void Stage_BlendTexArb(Gfx_Tex *tex, const RECT *src, const POINT_FIXED *p0, const POINT_FIXED *p1, const POINT_FIXED *p2, const POINT_FIXED *p3, fixed_t zoom, u8 mode);
-
 
 //Stage functions
 void Stage_Load(StageId id, StageDiff difficulty, boolean story);

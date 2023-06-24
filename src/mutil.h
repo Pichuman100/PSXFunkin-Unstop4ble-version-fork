@@ -18,5 +18,6 @@ s16 MUtil_Sin(u8 x);
 s16 MUtil_Cos(u8 x);
 void MUtil_RotatePoint(POINT *p, s16 s, s16 c);
 fixed_t MUtil_Pull(fixed_t a, fixed_t b, fixed_t t);
+fixed_t fixed_lerp(fixed_t position, fixed_t target, fixed_t speed);
 
 #endif

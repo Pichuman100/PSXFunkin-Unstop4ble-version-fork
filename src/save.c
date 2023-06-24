@@ -68,6 +68,7 @@ void defaultSettings()
 	stage.prefs.sfxmiss = 1;	
 	stage.prefs.songtimer = 1;
 	stage.prefs.flash = 1;
+	stage.prefs.combo = 1;
 
 	for (int i = 0; i < StageId_Max; i++)
 	{

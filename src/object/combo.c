@@ -38,8 +38,9 @@ boolean Obj_Combo_Tick(Object *obj)
 
 		hit_dst.y += stage.noteshakey;
 		hit_dst.x += stage.noteshakex;
-
-		Stage_DrawTex(&stage.tex_hud0, &hit_src, &hit_dst, stage.bump);
+		
+		if (stage.prefs.combo)
+			Stage_DrawTex(&stage.tex_hud0, &hit_src, &hit_dst, stage.bump);
 		
 		//Apply gravity
 		this->hy += FIXED_MUL(this->hv, timer_dt);
@@ -48,37 +49,6 @@ boolean Obj_Combo_Tick(Object *obj)
 	
 	//Increment hit type timer
 	this->ht += timer_dt;
-	
-	//Tick combo
-	if (this->num[4] != 0xFF && this->ct < (FIXED_DEC(16,1) / 60))
-	{
-		//Get hit src and dst
-		u8 clipp = 16;
-		if (this->ct > 0)
-			clipp = 16 - ((this->ct * 60) >> FIXED_SHIFT);
-		
-		RECT combo_src = {
-			80,
-			128,
-			80,
-			clipp << 1
-		};
-		RECT_FIXED combo_dst = {
-			this->x + FIXED_DEC(48,1),
-			this->cy - FIXED_DEC(16,1),
-			FIXED_DEC(60,1),
-			(FIXED_DEC(24,1) * clipp) >> 4
-		};
-		
-		combo_dst.y += stage.noteshakey;
-		combo_dst.x += stage.noteshakex;
-		
-		Stage_DrawTex(&stage.tex_hud0, &combo_src, &combo_dst, stage.bump);
-		
-		//Apply gravity
-		this->cy += FIXED_MUL(this->cv, timer_dt);
-		this->cv += FIXED_MUL(FIXED_DEC(3,100) * 60 * 60, timer_dt);
-	}
 	
 	//Increment combo timer
 	this->ct += timer_dt;
@@ -113,7 +83,8 @@ boolean Obj_Combo_Tick(Object *obj)
 			num_dst.y += stage.noteshakey;
 			num_dst.x += stage.noteshakex;
 			
-			Stage_DrawTex(&stage.tex_hud0, &num_src, &num_dst, stage.bump);
+			if (stage.prefs.combo)
+				Stage_DrawTex(&stage.tex_hud0, &num_src, &num_dst, stage.bump);
 			
 			//Apply gravity
 			this->numy[i] += FIXED_MUL(this->numv[i], timer_dt);
@@ -155,7 +126,8 @@ boolean Obj_Combo_Tick_Weeb(Object *obj)
 		hit_dst.y += stage.noteshakey;
 		hit_dst.x += stage.noteshakex;
 
-		Stage_DrawTex(&stage.tex_hud0, &hit_src, &hit_dst, stage.bump);
+		if (stage.prefs.combo)
+			Stage_DrawTex(&stage.tex_hud0, &hit_src, &hit_dst, stage.bump);
 		
 		//Apply gravity
 		this->hy += FIXED_MUL(this->hv, timer_dt) >> 1;
@@ -164,37 +136,6 @@ boolean Obj_Combo_Tick_Weeb(Object *obj)
 	
 	//Increment hit type timer
 	this->ht += timer_dt;
-	
-	//Tick combo
-	if (this->num[4] != 0xFF && this->ct < (FIXED_DEC(16,1) / 60))
-	{
-		//Get hit src and dst
-		u8 clipp = 16;
-		if (this->ct > 0)
-			clipp = 16 - ((this->ct * 60) >> FIXED_SHIFT);
-		
-		RECT combo_src = {
-			73,
-			129,
-			46,
-			(22 * clipp) >> 4
-		};
-		RECT_FIXED combo_dst = {
-			this->x + FIXED_DEC(48 - 10 - 50,1),
-			this->cy - FIXED_DEC(16 + 7 - 20,1),
-			FIXED_DEC(92 - 10,1),
-			(FIXED_DEC(44 - 10,1) * clipp) >> 4
-		};
-
-		combo_dst.y += stage.noteshakey;
-		combo_dst.x += stage.noteshakex;
-
-		Stage_DrawTex(&stage.tex_hud0, &combo_src, &combo_dst, stage.bump);
-		
-		//Apply gravity
-		this->cy += FIXED_MUL(this->cv, timer_dt) >> 1;
-		this->cv += FIXED_MUL(FIXED_DEC(3,100) * 60 * 60, timer_dt);
-	}
 	
 	//Increment combo timer
 	this->ct += timer_dt;
@@ -229,7 +170,8 @@ boolean Obj_Combo_Tick_Weeb(Object *obj)
 			num_dst.y += stage.noteshakey;
 			num_dst.x += stage.noteshakex;
 
-			Stage_DrawTex(&stage.tex_hud0, &num_src, &num_dst, stage.bump);
+			if (stage.prefs.combo)
+				Stage_DrawTex(&stage.tex_hud0, &num_src, &num_dst, stage.bump);
 			
 			//Apply gravity
 			this->numy[i] += FIXED_MUL(this->numv[i], timer_dt) >> 1;
@@ -258,13 +200,20 @@ Obj_Combo *Obj_Combo_New(fixed_t x, fixed_t y, u8 hit_type, u16 combo)
 		return NULL;
 	
 	//Set object functions and position
-	//Regular combo
-	this->obj.tick = Obj_Combo_Tick;
-	if ((x >= 0) ^ (stage.mode < StageMode_2P))
-		this->x = FIXED_DEC(-112,1) - FIXED_DEC(screen.SCREEN_WIDEADD,4);
+	if (stage.stage_id == StageId_Temp) //PLACEHOLDER
+	{
+		//Pixel combo
+		this->obj.tick = Obj_Combo_Tick_Weeb;
+		this->x = FIXED_DEC(-70,1) - FIXED_DEC(screen.SCREEN_WIDEADD,8);
+		y = FIXED_DEC(44,1);
+	}
 	else
-		this->x = FIXED_DEC(30,1) + FIXED_DEC(screen.SCREEN_WIDEADD,4);
-	y = FIXED_DEC(73,1);
+	{
+		//Regular combo
+		this->obj.tick = Obj_Combo_Tick;
+		this->x = FIXED_DEC(-112,1) - FIXED_DEC(screen.SCREEN_WIDEADD,4);
+		y = FIXED_DEC(73,1);
+	}
 	this->obj.free = Obj_Combo_Free;
 	
 	//Setup hit type

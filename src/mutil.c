@@ -50,3 +50,18 @@ void MUtil_RotatePoint(POINT *p, s16 s, s16 c)
 	p->x = ((px * c) >> 8) - ((py * s) >> 8);
 	p->y = ((px * s) >> 8) + ((py * c) >> 8);
 }
+
+fixed_t fixed_lerp(fixed_t current, fixed_t target, fixed_t speed)
+{
+    // Calculate the difference between the target and current positions.
+    fixed_t difference = target - current;
+
+    // Calculate the new position by interpolating between the current and target position.
+    fixed_t new_position = current + FIXED_MUL(difference, speed);
+
+    // Check if the difference between the new position and the target is within a threshold.
+    if ((difference <= FIXED_UNIT) && (difference >= -FIXED_UNIT))
+        new_position = target;
+
+    return new_position;
+}

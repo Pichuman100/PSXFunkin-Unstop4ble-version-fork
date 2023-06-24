@@ -102,8 +102,8 @@ static void Stage_CutVocal(void)
 static void Stage_FocusCharacter(Character *ch, fixed_t div)
 {
 	//Use character focus settings to update target position and zoom
-	stage.camera.tx = ch->x + ch->focus_x;
-	stage.camera.ty = ch->y + ch->focus_y;
+	stage.camera.tx = ch->focus_x;
+	stage.camera.ty = ch->focus_y;
 	stage.camera.tz = ch->focus_zoom;
 	stage.camera.td = div;
 }
@@ -139,9 +139,9 @@ static void Stage_ScrollCamera(void)
 			}
 			else
 			{
-				stage.camera.x = lerp(stage.camera.x, stage.camera.tx, FIXED_DEC(5,100));
-				stage.camera.y = lerp(stage.camera.y, stage.camera.ty, FIXED_DEC(5,100));
-				stage.camera.zoom = lerp(stage.camera.zoom, stage.camera.tz, FIXED_DEC(5,100));
+				stage.camera.x = fixed_lerp(stage.camera.x, stage.camera.tx, FIXED_DEC(5,100));
+				stage.camera.y = fixed_lerp(stage.camera.y, stage.camera.ty, FIXED_DEC(5,100));
+				stage.camera.zoom = fixed_lerp(stage.camera.zoom, stage.camera.tz, FIXED_DEC(5,100));
 			}
 		}
 	}
@@ -554,9 +554,49 @@ void Stage_DrawTexCol(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixe
 	Gfx_DrawTexCol(tex, src, &sdst, cr, cg, cb);
 }
 
+void Stage_DrawTexColFlipped(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, u8 cr, u8 cg, u8 cb)
+{
+	fixed_t xz = dst->x;
+	fixed_t yz = dst->y;
+	fixed_t wz = -dst->w;
+	fixed_t hz = dst->h;
+	
+	
+	//Don't draw if HUD and is disabled
+	if (tex == &stage.tex_hud0 || tex == &stage.tex_hud1)
+	{
+		#ifdef STAGE_NOHUD
+			return;
+		#endif
+	}
+	
+	fixed_t l = (screen.SCREEN_WIDTH2  << FIXED_SHIFT) + FIXED_MUL(xz, zoom);// + FIXED_DEC(1,2);
+	fixed_t t = (screen.SCREEN_HEIGHT2 << FIXED_SHIFT) + FIXED_MUL(yz, zoom);// + FIXED_DEC(1,2);
+	fixed_t r = l + FIXED_MUL(wz, zoom);
+	fixed_t b = t + FIXED_MUL(hz, zoom);
+	
+	l >>= FIXED_SHIFT;
+	t >>= FIXED_SHIFT;
+	r >>= FIXED_SHIFT;
+	b >>= FIXED_SHIFT;
+	
+	RECT sdst = {
+		l,
+		t,
+		r - l,
+		b - t,
+	};
+	Gfx_DrawTexCol(tex, src, &sdst, cr, cg, cb);
+}
+
 void Stage_DrawTex(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom)
 {
 	Stage_DrawTexCol(tex, src, dst, zoom, 0x80, 0x80, 0x80);
+}
+
+void Stage_DrawTexFlipped(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom)
+{
+	Stage_DrawTexColFlipped(tex, src, dst, zoom, 0x80, 0x80, 0x80);
 }
 
 void Stage_DrawTexRotate(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, u8 angle)
@@ -1462,6 +1502,8 @@ static void Stage_LoadState(void)
 		stage.bopintense2 = FIXED_DEC(15,1000);
 		stage.bump = FIXED_UNIT;
 		stage.charbump = FIXED_UNIT;
+		stage.flash = 0;
+		stage.flashspd = 0;
 		strcpy(stage.player_state[i].accuracy_text, "Accuracy: ?");
 		strcpy(stage.player_state[i].miss_text, "Misses: 0");
 		strcpy(stage.player_state[i].score_text, "Score: 0");
@@ -1833,19 +1875,20 @@ void Stage_Tick(void)
 			//FntPrint("step is %d", stage.song_step);
 			//^ makes step show on screen
 			
-			//Draw white fade
+			//Draw white flash
 			if (stage.stage_id == StageId_Temp) //PLACEHOLDER
 			{
-				fade = FIXED_DEC(255,1);
-				fadespd = FIXED_DEC(175,1);
+				stage.flash = FIXED_DEC(255,1);
+				stage.flashspd = FIXED_DEC(175,1);
 			}
 			if (stage.prefs.flash != 0)
-				if (fade > 0)
+				if (stage.flash > 0)
 				{
 					RECT flash = {0, 0, screen.SCREEN_WIDTH, screen.SCREEN_HEIGHT};
-					u8 flash_col = fade >> FIXED_SHIFT;
+					u8 flash_col = stage.flash >> FIXED_SHIFT;
 					Gfx_BlendRect(&flash, flash_col, flash_col, flash_col, 1);
-					fade -= FIXED_MUL(fadespd, timer_dt);
+					if (stage.paused == false)
+						stage.flash -= FIXED_MUL(stage.flashspd, timer_dt);
 				}
 			
 			if (stage.intro)
@@ -2105,8 +2148,8 @@ void Stage_Tick(void)
 					stage.font_cdr.draw(&stage.font_cdr,
 						this->score_text,
 						(stage.mode == StageMode_2P && i == 0) ? 10 : -150,
-						(stage.prefs.downscroll) ? -(screen.SCREEN_HEIGHT2 - 12) : (screen.SCREEN_HEIGHT2 - 21),
-						FontAlign_Left 
+						(stage.prefs.downscroll) ? -(screen.SCREEN_HEIGHT2 - 35) : (screen.SCREEN_HEIGHT2 - 21),
+						FontAlign_Left
 					);
 				}
 			}
@@ -2129,8 +2172,8 @@ void Stage_Tick(void)
 				{
 					stage.font_cdr.draw(&stage.font_cdr,
 						this->miss_text,
-						(stage.mode == StageMode_2P && i == 0) ? 100 : -60, 
-						(stage.prefs.downscroll) ? -(screen.SCREEN_HEIGHT2 - 12) : (screen.SCREEN_HEIGHT2 - 21),
+						(stage.mode == StageMode_2P && i == 0) ? 85 : (stage.mode == StageMode_2P && i == 1) ? -75 : -60, 
+						(stage.prefs.downscroll) ? -(screen.SCREEN_HEIGHT2 - 35) : (screen.SCREEN_HEIGHT2 - 21),
 						FontAlign_Left
 					);
 				}
@@ -2162,12 +2205,12 @@ void Stage_Tick(void)
 					this->refresh_accuracy = false;
 				}
 				//sorry for this shit lmao
-				if (show)
+				if ((show) && (stage.mode != StageMode_2P))
 				{
 					stage.font_cdr.draw(&stage.font_cdr,
 						this->accuracy_text,
 						(stage.mode == StageMode_2P && i == 0) ? 50 : (stage.mode == StageMode_2P && i == 1) ? -110 : 39, 
-						(stage.prefs.downscroll) ? -(screen.SCREEN_HEIGHT2 - 12) : (screen.SCREEN_HEIGHT2 - 21),
+						(stage.prefs.downscroll) ? -(screen.SCREEN_HEIGHT2 - 35) : (screen.SCREEN_HEIGHT2 - 21),
 						FontAlign_Left
 					);
 				}

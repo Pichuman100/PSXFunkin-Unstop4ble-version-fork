@@ -205,8 +205,8 @@ Character *Char_BF_New(fixed_t x, fixed_t y)
 	//health bar color
 	this->character.health_bar = 0xFF29B5D6;
 	
-	this->character.focus_x = FIXED_DEC(-50,1);
-	this->character.focus_y = FIXED_DEC(-65,1);
+	this->character.focus_x = FIXED_DEC(10,1);
+	this->character.focus_y = FIXED_DEC(35,1);
 	this->character.focus_zoom = FIXED_DEC(1,1);
 	
 	this->character.size = FIXED_DEC(1,1);
